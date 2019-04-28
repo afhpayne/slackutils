@@ -1,4 +1,4 @@
-###Slackgrab
+### Slackgrab
 
 The goal of Slackgrab is to make working wit slackbuilds easier.
 
