@@ -2,7 +2,7 @@
 
 The goal of Slackgrab is to make working with slackbuilds easier.
 
-At this stage, Slackgrab can:
+At this stage, Slackgrab can:  
 (1) Download the 64-bit tar file to the currently open slackbuild directory  
 (2) Announce dependencies for slackbuild  
 (3) Verify the MD5sum for the downloaded file against the one in program_name.info  
