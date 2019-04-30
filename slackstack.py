@@ -4,6 +4,7 @@ import os
 import shutil
 import glob
 
+os.system("clear")
 prog_base    = input("\nWhat program are we building? ")
 prog_name    = prog_base.lower().strip()
 dir_personal = os.path.join(os.environ['HOME'], "installers", "slackbuilds15", "")
@@ -94,7 +95,8 @@ def iterate_for_dependecies():
                             shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_build, prog_name))
                         except FileExistsError:
                             pass
-                        dependency_checked.append(prog_name)
+                        if prog_name not in dependency_checked:
+                            dependency_checked.append(prog_name)
                     else:
                         for dir in dirs:
                             path_to_prog = os.path.join(dir_git + dir + "/" + prog_name)
@@ -105,11 +107,12 @@ def iterate_for_dependecies():
                                     shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_build, prog_name))
                                 except FileExistsError:
                                     pass
-                                dependency_checked.append(prog_name)
+                                if prog_name not in dependency_checked:
+                                    dependency_checked.append(prog_name)
 
 for w in range(10):
     iterate_for_dependecies()
-#print(dependency_list)
+print(dependency_checked)
 
 f = open(os.path.join(os.environ['HOME'], "Desktop", "build", "installseq.txt"), "a")
 print("\nAdding dependencies:")
