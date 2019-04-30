@@ -4,10 +4,10 @@ The goal of Slackutils is to make working with slackbuilds easier.
 
 There are two utilities so far:
 
-Slackstack:
-Uses a local clone of the slackbuilds.org git repository.
-(1) Searches for a program in the local dirs
-(2) Copies the slackbuild to a 'build' directory
+Slackstack:  
+Uses a local clone of the slackbuilds.org git repository.  
+(1) Searches for a program in the local dirs  
+(2) Copies the slackbuild to a 'build' directory<br />
 (3) Scans the slackbuild for dependencies and copies those slackbuilds to the build directory
 (4) Recursively scans all dependecies for additional dependencies... and so on until every slackbuild has been copied to the build directory
 (5) Creates a text file to show the necessary installation order of the slackbuilds
