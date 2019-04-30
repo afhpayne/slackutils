@@ -46,6 +46,14 @@ for line in infofile.split("\n"):
                                 shutil.copyfileobj(response, tar_32b)
 
 for line in infofile.split("\n"):
+    if "REQUIRES=" in line:
+        depends = line.strip()
+        depends = depends.split('"')[1]
+        print("\nThis software requires:")
+        for dep in depends.split(" "):
+            print("-->", dep)
+
+for line in infofile.split("\n"):
     if "MD5SUM_x86_64=" in line:
         true_md5 = line.strip()
         true_md5 = true_md5.split('"')[1]
