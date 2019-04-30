@@ -4,8 +4,6 @@ import os
 import shutil
 import glob
 
-os.system("clear")
-
 prog_base    = input("\nWhat program are we building? ")
 prog_name    = prog_base.lower().strip()
 dir_personal = os.path.join(os.environ['HOME'], "installers", "slackbuilds15", "")
@@ -17,7 +15,7 @@ except FileExistsError:
     os.rename(os.path.join(os.environ['HOME'], "Desktop", "build"), os.path.join(os.environ['HOME'], "Desktop", "build.old"))
     os.mkdir(os.path.join(os.environ['HOME'], "Desktop", "build"))
 print("\nBuild directory =", os.path.join(os.environ['HOME'], "Desktop", "build", ""))
-    
+
 dirs = ['academic',
         'accessibility',
         'audio',
@@ -63,7 +61,7 @@ else:
 def iterate_for_dependecies():
     for dir in os.scandir(os.path.join(dir_build)):
         prog_name = dir
-    
+
         if prog_name != "" and prog_name not in dependency_checked:
 #            print(prog_name)
 
@@ -74,7 +72,7 @@ def iterate_for_dependecies():
                 with open(infofile) as i:
                     infofile = i.read()
                 i.closed
-            
+
                 for line in infofile.split("\n"):
                     if "REQUIRES=" in line:
                         depends = line.strip()
@@ -96,7 +94,7 @@ def iterate_for_dependecies():
                             shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_build, prog_name))
                         except FileExistsError:
                             pass
-                        dependency_checked.append(prog_name)            
+                        dependency_checked.append(prog_name)
                     else:
                         for dir in dirs:
                             path_to_prog = os.path.join(dir_git + dir + "/" + prog_name)
@@ -110,7 +108,7 @@ def iterate_for_dependecies():
                                 dependency_checked.append(prog_name)
 
 for w in range(10):
-    iterate_for_dependecies()    
+    iterate_for_dependecies()
 #print(dependency_list)
 
 f = open(os.path.join(os.environ['HOME'], "Desktop", "build", "installseq.txt"), "a")
