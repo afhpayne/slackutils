@@ -3,6 +3,7 @@
 import os
 import shutil
 import glob
+import stat
 
 os.system("clear")
 prog_base    = input("\nWhat program are we building? ")
@@ -110,9 +111,19 @@ def iterate_for_dependecies():
                                 if prog_name not in dependency_checked:
                                     dependency_checked.append(prog_name)
 
+def iterate_for_permissions():
+    for dir in os.scandir(os.path.join(dir_build)):
+        prog_name = dir
+        buildfile = glob.glob(os.path.join(dir_build, prog_name, "*.SlackBuild"))
+        if buildfile:
+            buildfile = buildfile[0]
+            os.chmod(os.path.join(buildfile), ( stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH ))
+
 for w in range(10):
     iterate_for_dependecies()
 print(dependency_checked)
+
+iterate_for_permissions()
 
 f = open(os.path.join(os.environ['HOME'], "Desktop", "build", "installseq.txt"), "a")
 print("\nAdding dependencies:")
