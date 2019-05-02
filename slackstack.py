@@ -129,8 +129,9 @@ f = open(os.path.join(os.environ['HOME'], "Desktop", "build", "installseq.txt"),
 print("\nAdding dependencies:")
 for dep in dependency_list[::-1]:
     if dep:
-        print(dep)
-        f.write(dep + "\n")
+        if os.path.isdir(os.path.join(dir_build, dep)):
+            print(dep)
+            f.write(dep + "\n")
 print("\nto", dir_build, "\n")
 f.write(prog_base)
 f.close()
