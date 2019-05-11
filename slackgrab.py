@@ -97,7 +97,7 @@ if yes_or_no == "N" or yes_or_no == "n":
         exit(0)
     else:
         print("TAR GRAB SOLO")
-        #tar_grab_func()
+        tar_grab_func()
 else:
     for dir in os.scandir(dir_build):
         currentwd = dir
