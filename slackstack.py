@@ -1,6 +1,6 @@
 #!/bin/env python3
 
-# Version 0.3.1
+# Version 0.3.2
 
 import os
 import shutil
@@ -9,7 +9,7 @@ import stat
 
 os.system("clear")
 prog_base    = input("\nWhat program are we building? ")
-prog_name    = prog_base.lower().strip()
+prog_name    = prog_base.strip()
 dir_personal = os.path.join(os.environ['HOME'], "slackware", "slackbuilds15", "")
 dir_git      = os.path.join(os.environ['HOME'], "slackbuilds", "")
 dir_build    = os.path.join(os.environ['HOME'], "Desktop", "build", "")
