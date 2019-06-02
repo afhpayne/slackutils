@@ -8,7 +8,7 @@ import hashlib
 
 
 currentwd    = os.getcwd()
-dir_build    = os.path.join(os.environ['HOME'], "Desktop", "build", "")
+dir_build    = os.path.join(os.environ['HOME'], "slackstack", glob.glob("*-tree", "")
 
 def tar_grab_func():
     infofile = glob.glob(os.path.join(currentwd, "*.info"))
