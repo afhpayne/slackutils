@@ -140,7 +140,7 @@ print(dependency_checked)
 
 iterate_for_permissions()
 
-f = open(os.path.join(os.environ['HOME'], "Desktop", prog_build_dir, "installseq.txt"), "a")
+f = open(os.path.join(os.environ['HOME'], dir_path, "installseq.txt"), "a")
 print("\nAdding dependencies:")
 for dep in dependency_list[::-1]:
     if dep:
