@@ -1,6 +1,6 @@
 #!/bin/env python3
 
-# Version 0.4.0
+# Version 0.4.1
 
 import os
 import shutil
@@ -8,18 +8,30 @@ import glob
 import stat
 
 os.system("clear")
+try:
+    os.mkdir(os.path.join(os.environ['HOME'], "slackstack"))
+except FileExistsError:
+    pass
+
 prog_base      = input("\nWhat program are we building? ")
 prog_name      = prog_base.strip()
 prog_build_dir = prog_base + "-tree"
 dir_personal   = os.path.join(os.environ['HOME'], "slackware", "slackbuilds15", "")
 dir_git        = os.path.join(os.environ['HOME'], "slackbuilds", "")
-dir_path       = os.path.join(os.environ['HOME'], "Desktop", prog_build_dir, "")
+dir_path       = os.path.join(os.environ['HOME'], "slackstack", prog_build_dir, "")
+
 try:
-    os.mkdir(os.path.join(os.environ['HOME'], "Desktop", prog_build_dir))
+    os.mkdir(os.path.join(os.environ['HOME'], dir_path))
 except FileExistsError:
-    os.rename(os.path.join(os.environ['HOME'], "Desktop", prog_build_dir), os.path.join(os.environ['HOME'], "Desktop", prog_build_dir + ".old"))
-    os.mkdir(os.path.join(os.environ['HOME'], "Desktop", prog_build_dir))
-print("\nBuild directory =", os.path.join(os.environ['HOME'], "Desktop", prog_build_dir, ""))
+    print("\n")
+    remove_or_quit = input("The build directory " + dir_path + " exists: \n(r)emove or (q)uit? ")
+    if remove_or_quit == "R" or remove_or_quit == "r":
+        shutil.rmtree(dir_path)
+        pass
+    else:
+        print("\n")
+        exit(0)
+print("\nBuild directory =", os.path.join(os.environ['HOME'], dir_path, ""))
 
 dirs = ['academic',
         'accessibility',
