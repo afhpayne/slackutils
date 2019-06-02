@@ -1,14 +1,18 @@
 #!/bin/env python3
 
+# Version = 0.4.1
+
 import urllib.request
 import shutil
 import os
 import glob
 import hashlib
 
-
-currentwd    = os.getcwd()
-dir_build    = os.path.join(os.environ['HOME'], "slackstack", glob.glob("*-tree", "")
+currentwd   = os.getcwd()
+build_home  = os.path.join(os.environ['HOME'], "slackstack", "")
+build_prog  = glob.glob(build_home + "*-tree")
+build_path  = os.path.join(str(build_prog))
+build_path  = build_path.strip("[").strip("]").strip("'")
 
 def tar_grab_func():
     infofile = glob.glob(os.path.join(currentwd, "*.info"))
@@ -88,7 +92,7 @@ def tar_grab_func():
         else:
             print("WARNING: checksum mismatch!\n")
 
-print("\nIterate all folders in [", dir_build, "] ?")
+print("\nIterate all folders in [", build_path, "] ?")
 yes_or_no = input("y/n: ")
 if yes_or_no == "N" or yes_or_no == "n":
     print("\nOk, use current: [", os.getcwd(), "] ?")
@@ -99,9 +103,7 @@ if yes_or_no == "N" or yes_or_no == "n":
         print("TAR GRAB SOLO")
         tar_grab_func()
 else:
-    for dir in os.scandir(dir_build):
+    for dir in os.scandir(os.path.join(build_path)):
         currentwd = dir
         print(currentwd)
         tar_grab_func()
-
-
