@@ -8,10 +8,6 @@ import glob
 import stat
 
 os.system("clear")
-try:
-    os.mkdir(os.path.join(os.environ['HOME'], "slackstack"))
-except FileExistsError:
-    pass
 
 prog_base      = input("\nWhat program are we building? ")
 prog_name      = prog_base.strip()
@@ -21,16 +17,18 @@ dir_git        = os.path.join(os.environ['HOME'], "slackbuilds", "")
 dir_path       = os.path.join(os.environ['HOME'], "slackstack", prog_build_dir, "")
 
 try:
-    os.mkdir(os.path.join(os.environ['HOME'], dir_path))
+    os.mkdir(os.path.join(os.environ['HOME'], "slackstack"))
 except FileExistsError:
-    print("\n")
-    remove_or_quit = input("The build directory " + dir_path + " exists: \n(r)emove or (q)uit? ")
-    if remove_or_quit == "R" or remove_or_quit == "r":
-        shutil.rmtree(dir_path)
-        pass
-    else:
-        print("\n")
-        exit(0)
+    check_path = os.path.join(os.environ['HOME'], "slackstack")
+    for dir in os.scandir(check_path):
+        path_name = str(dir).split("'")[1]
+        print("\nThe build directory contains: ", path_name)
+        remove_or_quit = input("(r)emove or (q)uit? ")
+        if remove_or_quit == "R" or remove_or_quit == "r":
+            shutil.rmtree(os.path.join(check_path, path_name))
+        else:
+            exit(1)
+
 print("\nBuild directory =", os.path.join(os.environ['HOME'], dir_path, ""))
 
 dirs = ['academic',
