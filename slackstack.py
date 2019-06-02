@@ -1,6 +1,6 @@
 #!/bin/env python3
 
-# Version 0.3.2
+# Version 0.4.0
 
 import os
 import shutil
@@ -8,17 +8,18 @@ import glob
 import stat
 
 os.system("clear")
-prog_base    = input("\nWhat program are we building? ")
-prog_name    = prog_base.strip()
-dir_personal = os.path.join(os.environ['HOME'], "slackware", "slackbuilds15", "")
-dir_git      = os.path.join(os.environ['HOME'], "slackbuilds", "")
-dir_build    = os.path.join(os.environ['HOME'], "Desktop", "build", "")
+prog_base      = input("\nWhat program are we building? ")
+prog_name      = prog_base.strip()
+prog_build_dir = prog_base + "-tree"
+dir_personal   = os.path.join(os.environ['HOME'], "slackware", "slackbuilds15", "")
+dir_git        = os.path.join(os.environ['HOME'], "slackbuilds", "")
+dir_path       = os.path.join(os.environ['HOME'], "Desktop", prog_build_dir, "")
 try:
-    os.mkdir(os.path.join(os.environ['HOME'], "Desktop", "build"))
+    os.mkdir(os.path.join(os.environ['HOME'], "Desktop", prog_build_dir))
 except FileExistsError:
-    os.rename(os.path.join(os.environ['HOME'], "Desktop", "build"), os.path.join(os.environ['HOME'], "Desktop", "build.old"))
-    os.mkdir(os.path.join(os.environ['HOME'], "Desktop", "build"))
-print("\nBuild directory =", os.path.join(os.environ['HOME'], "Desktop", "build", ""))
+    os.rename(os.path.join(os.environ['HOME'], "Desktop", prog_build_dir), os.path.join(os.environ['HOME'], "Desktop", prog_build_dir + ".old"))
+    os.mkdir(os.path.join(os.environ['HOME'], "Desktop", prog_build_dir))
+print("\nBuild directory =", os.path.join(os.environ['HOME'], "Desktop", prog_build_dir, ""))
 
 dirs = ['academic',
         'accessibility',
@@ -48,7 +49,7 @@ path_to_prog = os.path.join(dir_personal + prog_name)
 if os.path.isdir(path_to_prog):
     print("\nFound", os.path.join(path_to_prog))
     try:
-        shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_build, prog_name))
+        shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
     except FileExistsError:
         pass
 else:
@@ -57,19 +58,19 @@ else:
         if os.path.isdir(path_to_prog):
             print("\nFound:", os.path.join(path_to_prog))
             try:
-                shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_build, prog_name))
+                shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
             except FileExistsError:
                 pass
 
 #dependency_checked.append(prog_name)
 def iterate_for_dependecies():
-    for dir in os.scandir(os.path.join(dir_build)):
+    for dir in os.scandir(os.path.join(dir_path)):
         prog_name = dir
 
         if prog_name != "" and prog_name not in dependency_checked:
 #            print(prog_name)
 
-            infofile = glob.glob(os.path.join(dir_build, prog_name, "*.info"))
+            infofile = glob.glob(os.path.join(dir_path, prog_name, "*.info"))
             if infofile:
                 infofile = infofile[0]
 
@@ -95,7 +96,7 @@ def iterate_for_dependecies():
 #                        print(os.path.join(path_to_prog))
 #                        print("YES")
                         try:
-                            shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_build, prog_name))
+                            shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
                         except FileExistsError:
                             pass
                         if prog_name not in dependency_checked:
@@ -107,16 +108,16 @@ def iterate_for_dependecies():
  #                               print(os.path.join(path_to_prog))
  #                               print("YES")
                                 try:
-                                    shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_build, prog_name))
+                                    shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
                                 except FileExistsError:
                                     pass
                                 if prog_name not in dependency_checked:
                                     dependency_checked.append(prog_name)
 
 def iterate_for_permissions():
-    for dir in os.scandir(os.path.join(dir_build)):
+    for dir in os.scandir(os.path.join(dir_path)):
         prog_name = dir
-        buildfile = glob.glob(os.path.join(dir_build, prog_name, "*.SlackBuild"))
+        buildfile = glob.glob(os.path.join(dir_path, prog_name, "*.SlackBuild"))
         if buildfile:
             buildfile = buildfile[0]
             os.chmod(os.path.join(buildfile), ( stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH ))
@@ -127,13 +128,13 @@ print(dependency_checked)
 
 iterate_for_permissions()
 
-f = open(os.path.join(os.environ['HOME'], "Desktop", "build", "installseq.txt"), "a")
+f = open(os.path.join(os.environ['HOME'], "Desktop", prog_build_dir, "installseq.txt"), "a")
 print("\nAdding dependencies:")
 for dep in dependency_list[::-1]:
     if dep:
-        if os.path.isdir(os.path.join(dir_build, dep)):
+        if os.path.isdir(os.path.join(dir_path, dep)):
             print(dep)
             f.write(dep + "\n")
-print("\nto", dir_build, "\n")
+print("\nto", dir_path, "\n")
 f.write(prog_base)
 f.close()
