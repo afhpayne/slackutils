@@ -7,7 +7,7 @@ There are two utilities so far:
 #### Slackstack:<br />
 Uses a local clone of the slackbuilds.org git repository <br />
 1. Searches for a program in the local clone or user folder<br />
-2. Copies the slackbuild to a 'build' directory [default = ~/Desktop/build]<br />
+2. Copies the slackbuild to a 'build' directory [default = ~/slackstack/[program_name]-tree]<br />
 3. Scans the slackbuild for dependencies and copies *those* slackbuilds to the build directory<br />
 4. Recursively scans all dependecies for additional dependencies... and so on until every *needed* slackbuild has been copied to the build directory<br />
 5. Creates a text file to show the installation order of the slackbuilds
