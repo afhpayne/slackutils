@@ -1,6 +1,6 @@
 #!/bin/env python3
 
-# Version 0.4.1
+# Version 0.5.0
 
 import os
 import shutil
