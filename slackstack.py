@@ -52,8 +52,9 @@ dirs = ['academic',
         'ruby',
         'system']
 
-dependency_checked = []
-dependency_list = []
+list1_checked_for_deps = []
+list2_is_a_dep = []
+list3_install_seq = []
 
 path_to_prog = os.path.join(dir_personal + prog_name)
 if os.path.isdir(path_to_prog):
@@ -72,12 +73,14 @@ else:
             except FileExistsError:
                 pass
 
-#dependency_checked.append(prog_name)
+#list1_checked_for_deps.append(prog_name)
 def iterate_for_dependecies():
-    for dir in os.scandir(os.path.join(dir_path)):
+    for dir in os.listdir(os.path.join(dir_path)):
         prog_name = dir
+        prog_name = str(prog_name)
 
-        if prog_name != "" and prog_name not in dependency_checked:
+        if prog_name != "" and prog_name not in list1_checked_for_deps:
+            list1_checked_for_deps.append(prog_name)
 #            print(prog_name)
 
             infofile = glob.glob(os.path.join(dir_path, prog_name, "*.info"))
@@ -95,10 +98,10 @@ def iterate_for_dependecies():
 #                        print("\nThis software requires:")
                         for dep in depends.split(" "):
 #                            print("-->", dep)
-                            if dep not in dependency_list:
-                                dependency_list.append(dep)
+                            #if dep not in list2_is_a_dep:
+                            list2_is_a_dep.append(dep)
 
-                for item in dependency_list:
+                for item in list2_is_a_dep:
                     prog_name = item
                     path_to_prog = os.path.join(dir_personal + prog_name)
 #                    print(path_to_prog)
@@ -109,8 +112,8 @@ def iterate_for_dependecies():
                             shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
                         except FileExistsError:
                             pass
-                        if prog_name not in dependency_checked:
-                            dependency_checked.append(prog_name)
+#                         #if prog_name not in list1_checked_for_deps:
+#                         list1_checked_for_deps.append(prog_name)
                     else:
                         for dir in dirs:
                             path_to_prog = os.path.join(dir_git + dir + "/" + prog_name)
@@ -121,8 +124,8 @@ def iterate_for_dependecies():
                                     shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
                                 except FileExistsError:
                                     pass
-                                if prog_name not in dependency_checked:
-                                    dependency_checked.append(prog_name)
+                                #if prog_name not in list1_checked_for_deps:
+#                                 list1_checked_for_deps.append(prog_name)
 
 def iterate_for_permissions():
     for dir in os.scandir(os.path.join(dir_path)):
@@ -134,13 +137,22 @@ def iterate_for_permissions():
 
 for w in range(10):
     iterate_for_dependecies()
-print(dependency_checked)
 
 iterate_for_permissions()
 
-f = open(os.path.join(os.environ['HOME'], dir_path, "installseq.txt"), "a")
+# print("\nCHECKED FOR DEPS")
+# print(*list1_checked_for_deps,  sep="\n")
+# print("\nIS A DEP")
+# print(*list2_is_a_dep, sep="\n")
+# print("\n")
+
 print("\nAdding dependencies:")
-for dep in dependency_list[::-1]:
+for dep in list2_is_a_dep[::-1]:
+    if dep not in list3_install_seq:
+        list3_install_seq.append(dep)
+
+f = open(os.path.join(os.environ['HOME'], dir_path, "installseq.txt"), "a")
+for dep in list3_install_seq:
     if dep:
         if os.path.isdir(os.path.join(dir_path, dep)):
             print(dep)
