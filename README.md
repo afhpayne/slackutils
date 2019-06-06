@@ -20,7 +20,7 @@ Uses a local clone of the slackbuilds.org git repository <br />
 4. Verifies the MD5sum for the downloaded files against the one in the respective *.info files
 5. The user can also choose to entry a particular slackbuild folder and download/verify *only* that tar file
 
-Everything is written in python 3.6 and has no dependencies beyond the standard python library.
+Everything is written in python 3.7 and has no dependencies beyond the standard python library.
 
 Near-term goals:<br />
 * [DONE] Add user input to select directories<br />
