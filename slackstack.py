@@ -1,6 +1,6 @@
 #!/bin/env python3
 
-# Version 0.5.0
+# Version 0.5.1
 
 import os
 import shutil
@@ -12,7 +12,7 @@ os.system("clear")
 prog_base      = input("\nWhat program are we building? ")
 prog_name      = prog_base.strip()
 prog_build_dir = prog_base + "-tree"
-dir_personal   = os.path.join(os.environ['HOME'], "slackware", "slackbuilds15", "")
+dir_personal   = os.path.join(os.environ['HOME'], "slackware", "dev_slack15", "")
 dir_git        = os.path.join(os.environ['HOME'], "slackbuilds", "")
 dir_path       = os.path.join(os.environ['HOME'], "slackstack", prog_build_dir, "")
 
