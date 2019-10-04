@@ -7,7 +7,7 @@ There are two utilities so far:
 #### Slackstack:<br />
 Uses a local clone of the slackbuilds.org git repository <br />
 1. Searches for a program in the local clone or user folder<br />
-2. Copies the slackbuild to a 'build' directory [default = ~/slackstack/[program_name]-tree]<br />
+2. Copies the slackbuild to a 'build' directory --> default = ~/slackstack/[program_name]-tree<br />
 3. Scans the slackbuild for dependencies and copies *those* slackbuilds to the build directory<br />
 4. Recursively scans all dependecies for additional dependencies... and so on until every *needed* slackbuild has been copied to the build directory<br />
 5. Creates a text file to show the installation order of the slackbuilds
@@ -20,7 +20,7 @@ Uses a local clone of the slackbuilds.org git repository <br />
 4. Verifies the MD5sum for the downloaded files against the one in the respective *.info files
 5. The user can also choose to entry a particular slackbuild folder and download/verify *only* that tar file
 
-Everything is written in python 3.6 and has no dependencies beyond the standard python library.
+Everything is written in python 3.7 and has no dependencies beyond the standard python library.
 
 Near-term goals:<br />
 * [DONE] Add user input to select directories<br />
