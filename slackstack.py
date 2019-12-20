@@ -1,6 +1,11 @@
 #!/bin/env python3
 
-# Version 0.5.1
+# Software Data:
+soft_name = "Slackstack"
+soft_tag  = "A slackbuild utility"
+
+# Version
+soft_vers = "0.5.2"
 
 import os
 import shutil
@@ -8,11 +13,13 @@ import glob
 import stat
 
 os.system("clear")
+welstr = ("Welcome to " + soft_name + " version " + soft_vers + ", " + soft_tag + ".")
+
 
 prog_base      = input("\nWhat program are we building? ")
 prog_name      = prog_base.strip()
 prog_build_dir = prog_name + "-tree"
-dir_personal   = os.path.join(os.environ['HOME'], "slackware", "dev_slack15_null", "")
+dir_personal   = os.path.join(os.environ['HOME'], "slackware", "slackbuilds15", "")
 dir_git        = os.path.join(os.environ['HOME'], "slackbuilds", "")
 dir_path       = os.path.join(os.environ['HOME'], "slackstack", prog_build_dir, "")
 
