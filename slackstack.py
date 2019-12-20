@@ -14,7 +14,7 @@ import stat
 
 os.system("clear")
 welstr = ("Welcome to " + soft_name + " version " + soft_vers + ", " + soft_tag + ".")
-
+print("\n" + welstr)
 
 prog_base      = input("\nWhat program are we building? ")
 prog_name      = prog_base.strip()
@@ -165,5 +165,5 @@ for dep in list3_install_seq:
             print(dep)
             f.write(dep + "\n")
 print("\nto", dir_path, "\n")
-f.write(prog_base)
+f.write(prog_base + "\n")
 f.close()
