@@ -2,10 +2,10 @@
 
 # Software Data:
 soft_name = "Slackstack"
-soft_tag  = "A slackbuild utility"
+soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.5.2"
+soft_vers = "0.5.3"
 
 import os
 import shutil
@@ -162,8 +162,29 @@ f = open(os.path.join(os.environ['HOME'], dir_path, "installseq.txt"), "a")
 for dep in list3_install_seq:
     if dep:
         if os.path.isdir(os.path.join(dir_path, dep)):
-            print(dep)
-            f.write(dep + "\n")
-print("\nto", dir_path, "\n")
+            dep_trace = glob.glob("/var/lib/pkgtools/packages/" + dep + "*")
+            if dep_trace:
+               print(dep + " [INSTALLED]")
+               f.write(dep + " [INSTALLED]" + "\n")
+            else:
+                print(dep)
+                f.write(dep + "\n")
+
+print("\n" + "for..." + "\n")
+app_trace = glob.glob("/var/lib/pkgtools/packages/" + prog_base + "*")
+if app_trace:
+   print(prog_base + " [INSTALLED]")
+   f.write(prog_base + " [INSTALLED]" + "\n")
+else:
+    print(prog_base)
+    f.write(prog_base + "\n")
 f.write(prog_base + "\n")
 f.close()
+
+print("\nto", dir_path, "\n")
+
+# re = glob.glob("/var/lib/pkgtools/packages/" + "spectrwm*")
+# if re:
+#     print("we found something")
+# else:
+#     print("NOTHING")
