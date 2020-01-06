@@ -3,9 +3,9 @@
 The goal of Slackutils is to make working with slackbuilds easier.
 
 #### Release Notes:<br />
-0.5.3 slackstack has one important new feature -- now it searchs the computer to see if the program being built is already installed.  If the program or any of its dependencies are installed, it adds asterisks to the relevant entry in the installseq.txt file. 
+0.5.3 slackstack has one important new feature -- now it searchs the computer to see if the program being built is already installed.  If the program or any of its dependencies are installed, it adds asterisks to the relevant entries in the installseq.txt file and shows [INSTALLED] on the screen output. 
 
-0.5.2 slackgrab is a major revision.  The code is cleaner and handles *.info files in a more efficient manner.<br />
+0.5.0 slackgrab is a major revision.  The code is cleaner and handles *.info files in a more efficient manner.<br />
 ** Programs with multiple (unlimited) binaries are now supported.  This means things like the Nvidia driver are downloaded and verified correctly<br />
 ** The code now supports slackbuild *.info files where the tarball htmls are located in eithe DOWNLOADS_x86_64 area or the DOWNLOADS area.  There is some variation among slackbuilds, so the program checks the x86 location first and moves to the other one if nothing is found.
 
