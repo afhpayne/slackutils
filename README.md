@@ -3,8 +3,8 @@
 The goal of Slackutils is to make working with slackbuilds easier.
 
 #### Notes:<br />
-0.5.2 slackgrab is a major revision.  The code is cleaner and handles *.info files in a more efficient manner.
-** Programs with multiple (unlimited) binaries are now supported.  This means things like the Nvidia driver are downloaded and verified correctly
+0.5.2 slackgrab is a major revision.  The code is cleaner and handles *.info files in a more efficient manner.<br />
+** Programs with multiple (unlimited) binaries are now supported.  This means things like the Nvidia driver are downloaded and verified correctly<br />
 ** The code now supports slackbuild *.info files where the tarball htmls are located in eithe DOWNLOADS_x86_64 area or the DOWNLOADS area.  There is some variation among slackbuilds, so the program checks the x86 location first and moves to the other one if nothing is found.
 
 
