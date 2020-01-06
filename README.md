@@ -2,7 +2,13 @@
 
 The goal of Slackutils is to make working with slackbuilds easier.
 
-There are two utilities so far:
+#### Notes:<br />
+0.5.2 slackgrab is a major revision.  The code is cleaner and handles *.info files in a more efficient manner.
+** Programs with multiple (unlimited) binaries are now supported.  This means things like the Nvidia driver are downloaded and verified correctly
+** The code now supports slackbuild *.info files where the tarball htmls are located in eithe DOWNLOADS_x86_64 area or the DOWNLOADS area.  There is some variation among slackbuilds, so the program checks the x86 location first and moves to the other one if nothing is found.
+
+
+#### There are two utilities -- slackstack and slackgrab
 
 #### Slackstack:<br />
 Uses a local clone of the slackbuilds.org git repository <br />
@@ -16,16 +22,17 @@ Uses a local clone of the slackbuilds.org git repository <br />
 #### Slackgrab:  
 1. Asks if the user wants to iterate through all folders in build directory (see above) to identify needed tar files<br />
 2. Downloads the 64-bit tar files to the matching slackbuild directory<br />
-3. Announces the dependencies for the slackbuild<br />
-4. Verifies the MD5sum for the downloaded files against the one in the respective *.info files
-5. The user can also choose to entry a particular slackbuild folder and download/verify *only* that tar file
+3. Verifies the MD5sum for the downloaded files against the one in the respective *.info files
+4. Allows the user to use the default build location (/home/user/slackstack) or to choose another
 
-Everything is written in python 3.7 and has no dependencies beyond the standard python library.
+Everything is written in python 3.8 and has no dependencies beyond the standard python library.
 
 Near-term goals:<br />
+* [DONE] add support for multiple binary builds
+* combine utilities into one program
 * [DONE] Add user input to select directories<br />
 * [DONE] Add slackgrab option to traverse multiple slackbuild directories and download tar files for each<br />
-* Maybe add 32-bit support<br />
+* [PHASE1] Maybe add 32-bit support<br />
 * [DONE] Search a local database for available slackbuilds (e.g., a local git clone of the slackbuilds repo)<br />
 * Search a remote databse for available slackbuilds (e.g., slackbuilds.org)<br />
-* Download remote slackbuilds and check *.asc file agaist slackbuilds gpg key
+
