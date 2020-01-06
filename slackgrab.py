@@ -1,12 +1,22 @@
 #!/bin/env python3
 
-# Version = 0.4.1
+# Software Data:
+soft_name = "Slackgrab"
+soft_tag  = "a slackbuild tarball and binary downloader"
+
+# Version
+soft_vers = "0.5.0"
 
 import urllib.request
 import shutil
 import os
 import glob
 import hashlib
+import re
+
+os.system("clear")
+welstr = ("Welcome to " + soft_name + " version " + soft_vers + ", " + soft_tag + ".")
+print("\n" + welstr)
 
 currentwd   = os.getcwd()
 build_home  = os.path.join(os.environ['HOME'], "slackstack", "")
@@ -23,74 +33,78 @@ def tar_grab_func():
         with open(infofile) as i:
             infofile = i.read()
         i.closed
-
-        global tarname
-        global true_md5
-
-        for line in infofile.split("\n"):
-            if "DOWNLOAD_x86_64=" in line:
-                url_64b = line.strip()
-                url_64b = url_64b.split('"')[1]
-                if url_64b != '':
-                    print("\nURL =", url_64b)
-                    tar_64b = url_64b.split("/")
-                    tar_64b = (tar_64b[-1])
-                    print("\nFile name =", tar_64b)
-                    tarname = tar_64b
-                    if tar_64b != '':
-                        with urllib.request.urlopen(url_64b) as response, open(tar_64b, 'wb') as tar_64b:
-                            shutil.copyfileobj(response, tar_64b)
+        
+        line_list   = []
+        check_64bit = []
+        url_list    = []
+        md5_list    = []
+        a = 0
+        b = 0
+        
+        back_half_url = infofile.split("DOWNLOAD_x86_64=")
+        for item in back_half_url[1].split():
+            if "http" in item:
+                url_list.append(item.strip('"'))
+                a += 1
+        back_half_md5 = infofile.split("MD5SUM_x86_64=")
+        for item in back_half_md5[1].split():
+            if len(item) > 5 and b < a:
+                md5_list.append(item.strip('"'))
+                b += 1
+        if a != 0:
+            c = 0
+            for url in url_list:
+                tarname = url.split('/')
+                tarname = tarname[-1]
+                tarname_text = tarname
+                print("Downloading " + url)
+                with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarname:
+                    shutil.copyfileobj(response, tarname)
+                    
+                hasher = hashlib.md5()
+                with open(tarname_text, "rb") as tarball:
+                    binary = tarball.read()
+                    hasher.update(binary)
+                print("\n" + tarname_text + "\n")
+                print("slackbuild md5sum  =", md5_list[c])
+                print("actual file md5sum =", hasher.hexdigest())
+                if md5_list[c] != hasher.hexdigest():
+                    print("\n* * * CHECKSUMS DO NOT MATCH! * * *\n")
                 else:
-                    for line in infofile.split("\n"):
-                        if "DOWNLOAD=" in line:
-                            url_32b = line.strip()
-                            url_32b = url_32b.split('"')[1]
-                            if url_32b != '':
-                                print("\nURL = ", url_32b)
-                                tar_32b = url_32b.split("/")
-                                tar_32b = (tar_32b[-1])
-                                print("\nFile name =", tar_32b)
-                                tarname = tar_32b
-                                if tar_32b != '':
-                                    with urllib.request.urlopen(url_32b) as response, open(tar_32b, 'wb') as tar_32b:
-                                        shutil.copyfileobj(response, tar_32b)
-
-        for line in infofile.split("\n"):
-            if "REQUIRES=" in line:
-                depends = line.strip()
-                depends = depends.split('"')[1]
-                print("\nThis software requires:")
-                for dep in depends.split(" "):
-                    print("-->", dep)
-
-        for line in infofile.split("\n"):
-            if "MD5SUM_x86_64=" in line:
-                true_md5 = line.strip()
-                true_md5 = true_md5.split('"')[1]
-                if true_md5 != '':
-                    continue
-                else:
-                    for line in infofile.split("\n"):
-                        if "MD5SUM=" in line:
-                            true_md5 = line.strip()
-                            true_md5 = true_md5.split('"')[1]
-        
-        print("")
-        print(true_md5, "= Slackbuild MD5")
-        
-        def md5(tarname):
-            m = hashlib.md5()
-            with open(tarname, "rb") as f:
-                for block in iter(lambda: f.read(), b""):
-                    m.update(block)
-                    return m.hexdigest()
-        
-        print(md5(tarname), "=", tarname)
-        
-        if md5(tarname) == true_md5:
-            print("The checksums match!\n")
+                    print("Checksum match :) \n")
+                c += 1
         else:
-            print("WARNING: checksum mismatch!\n")
+            front_half_url = infofile.split("DOWNLOAD=")
+            for item in front_half_url[1].split():
+                if "http" in item:
+                    url_list.append(item.strip('"'))
+                    a += 1
+            front_half_md5 = infofile.split("MD5SUM=")
+            for item in front_half_md5[1].split():
+                if len(item) > 5 and b < a:
+                    md5_list.append(item.strip('"'))
+                    b += 1
+            c = 0
+            for url in url_list:
+                tarname = url.split('/')
+                tarname = tarname[-1]
+                tarname_text = tarname
+                print("Downloading " + url)
+                with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarname:
+                    shutil.copyfileobj(response, tarname)
+                    
+                hasher = hashlib.md5()
+                with open(tarname_text, "rb") as tarball:
+                    binary = tarball.read()
+                    hasher.update(binary)
+                print("\n" + tarname_text + "\n")
+                print("slackbuild md5sum  =", md5_list[c])
+                print("actual file md5sum =", hasher.hexdigest())
+                if md5_list[c] != hasher.hexdigest():
+                    print("\n* * * CHECKSUMS DO NOT MATCH! * * *\n")
+                else:
+                    print("Checksum match :) \n")
+                c += 1
 
 print("\nIterate all folders in [", build_path, "] ?")
 yes_or_no = input("y/n: ")
@@ -100,7 +114,7 @@ if yes_or_no == "N" or yes_or_no == "n":
     if yes_or_no == "N" or yes_or_no == "n":
         exit(0)
     else:
-        print("TAR GRAB SOLO")
+        print("Using current directory")
         tar_grab_func()
 else:
     for dir in os.scandir(os.path.join(build_path)):
