@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.5.3"
+soft_vers = "0.5.4"
 
 import os
 import shutil
@@ -171,7 +171,7 @@ for dep in list3_install_seq:
                 f.write(dep + "\n")
 
 print("\n" + "for..." + "\n")
-app_trace = glob.glob("/var/lib/pkgtools/packages/" + prog_base + "*")
+app_trace = glob.glob("/var/lib/pkgtools/packages/" + prog_base + "-" + "*")
 if app_trace:
    print(prog_base + " [INSTALLED]")
    f.write(prog_base + " [INSTALLED]" + "\n")
