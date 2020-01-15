@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.5.4"
+soft_vers = "0.5.5"
 
 import os
 import shutil
@@ -147,12 +147,6 @@ for w in range(10):
 
 iterate_for_permissions()
 
-# print("\nCHECKED FOR DEPS")
-# print(*list1_checked_for_deps,  sep="\n")
-# print("\nIS A DEP")
-# print(*list2_is_a_dep, sep="\n")
-# print("\n")
-
 print("\nAdding dependencies:")
 for dep in list2_is_a_dep[::-1]:
     if dep not in list3_install_seq:
@@ -162,7 +156,7 @@ f = open(os.path.join(os.environ['HOME'], dir_path, "installseq.txt"), "a")
 for dep in list3_install_seq:
     if dep:
         if os.path.isdir(os.path.join(dir_path, dep)):
-            dep_trace = glob.glob("/var/lib/pkgtools/packages/" + dep + "*")
+            dep_trace = glob.glob("/var/lib/pkgtools/packages/" + dep + "-" + "*")
             if dep_trace:
                print(dep + " [INSTALLED]")
                f.write(dep + " [INSTALLED]" + "\n")
@@ -173,8 +167,8 @@ for dep in list3_install_seq:
 print("\n" + "for..." + "\n")
 app_trace = glob.glob("/var/lib/pkgtools/packages/" + prog_base + "-" + "*")
 if app_trace:
-   print(prog_base + " [INSTALLED]")
-   f.write(prog_base + " [INSTALLED]" + "\n")
+    print(prog_base + " [INSTALLED]")
+    f.write(prog_base + " [INSTALLED]" + "\n")
 else:
     print(prog_base)
     f.write(prog_base + "\n")
@@ -182,9 +176,3 @@ f.write(prog_base + "\n")
 f.close()
 
 print("\nto", dir_path, "\n")
-
-# re = glob.glob("/var/lib/pkgtools/packages/" + "spectrwm*")
-# if re:
-#     print("we found something")
-# else:
-#     print("NOTHING")
