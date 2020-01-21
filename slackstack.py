@@ -5,12 +5,13 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.5.5"
+soft_vers = "0.6.0"
 
 import os
 import shutil
 import glob
 import stat
+import pkg_resources
 
 os.system("clear")
 welstr = ("Welcome to " + soft_name + " version " + soft_vers + ", " + soft_tag + ".")
@@ -158,21 +159,96 @@ for dep in list3_install_seq:
         if os.path.isdir(os.path.join(dir_path, dep)):
             dep_trace = glob.glob("/var/lib/pkgtools/packages/" + dep + "-" + "*")
             if dep_trace:
-               print(dep + " [INSTALLED]")
-               f.write(dep + " [INSTALLED]" + "\n")
+                dep_status = (dep + " [INSTALLED]")
+                print(dep_status)
+                f.write(dep_status + "\n")
+                dep_show = dep_trace.pop().split("/")
+                dep_show = dep_show[5]
+                print("--> version is " + dep_show + "\n")
+            elif "python" in dep:
+                dep_base_check = dep.split("-")
+                if dep_base_check[1] == "python" or dep_base_check[1] == "python3":
+                    dep_base_check = str(dep_base_check[0].rstrip("0123456789"))
+                    x = 0
+                    for i in pkg_resources.working_set:
+                        j = str(i).lower().find(dep_base_check.lower())
+                        if j > -1:
+                            dep_status = (dep + " [INSTALLED] (in python library)")
+                            print(dep_status)
+                            print("--> version is", i, "\n")
+                            f.write(dep_status + "\n")
+                            x += 1
+                    if x == 0:
+                        print(dep)
+                else:
+                    dep_base_check = str(dep_base_check[1].rstrip("0123456789"))
+                    x = 0
+                    for i in pkg_resources.working_set:
+                        j = str(i).lower().find(dep_base_check.lower())
+                        if j > -1:
+                            dep_status = (dep + " [INSTALLED] (in python library)")
+                            print(dep_status + "\n")
+                            f.write(dep_status + "\n")
+                            x += 1
+                    if x == 0:
+                        print(dep)
+            elif "py" in dep:
+                dep_soft_check = ''.join([letter for letter in dep if not letter.isdigit()])
+                y = 0
+                for i in pkg_resources.working_set:
+                    j = str(i).lower().find(dep_soft_check.lower())
+                    if j > -1:
+                        dep_status = (dep + " [*MAY* BE INSTALLED] (in python library)")
+                        print(dep_status)
+                        print("--> version is", i, "\n")
+                        f.write(dep_status + "\n")
+                        y += 1
+                if y == 0:
+                    print(dep)
             else:
                 print(dep)
                 f.write(dep + "\n")
 
 print("\n" + "for..." + "\n")
+
 app_trace = glob.glob("/var/lib/pkgtools/packages/" + prog_base + "-" + "*")
 if app_trace:
-    print(prog_base + " [INSTALLED]")
-    f.write(prog_base + " [INSTALLED]" + "\n")
+    app_status = (prog_base + " [INSTALLED]")
+    print(app_status)
+    f.write(app_status + "\n")
+    app_show = app_trace.pop().split("/")
+    app_show = app_show[5]
+    print("--> version is " + app_show + "\n")
+elif "python" in prog_base:
+    prog_base_check = prog_base.split("-")
+    if prog_base_check[1] == "python" or prog_base_check[1] == "python3":
+        prog_base_check = str(prog_base_check[0].rstrip("0123456789"))
+        x = 0
+        for i in pkg_resources.working_set:
+            j = str(i).lower().find(prog_base_check.lower())
+            if j > -1:
+                app_status = (prog_base + " [INSTALLED] (in python library)")
+                print(app_status)
+                f.write(app_status + "\n")
+                x += 1
+        if x == 0:
+            print(prog_base)
+    else:
+        prog_base_check = str(prog_base_check[1].rstrip("0123456789"))
+        x = 0
+        for i in pkg_resources.working_set:
+            j = str(i).lower().find(prog_base_check.lower())
+            if j > -1:
+                app_status = (prog_base + " [INSTALLED] (in python library)")
+                print(app_status)
+                f.write(app_status + "\n")
+                x += 1
+        if x == 0:
+            print(prog_base)
 else:
     print(prog_base)
     f.write(prog_base + "\n")
-f.write(prog_base + "\n")
+
 f.close()
 
 print("\nto", dir_path, "\n")
