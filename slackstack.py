@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.6.0"
+soft_vers = "0.6.1"
 
 import os
 import shutil
@@ -205,6 +205,7 @@ for dep in list3_install_seq:
                         y += 1
                 if y == 0:
                     print(dep)
+                    f.write(dep + "\n")
             else:
                 print(dep)
                 f.write(dep + "\n")
