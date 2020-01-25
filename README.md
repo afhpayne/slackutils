@@ -1,4 +1,4 @@
-### Slackutils
+## Slackutils
 
 The goal of Slackutils is to make working with slackbuilds easier.
 
@@ -19,9 +19,10 @@ Uses a local clone of the slackbuilds.org git repository <br />
 3. Verifies the MD5sum for the downloaded files against the one in the respective *.info files
 4. Allows the user to use the default build location (/home/user/slackstack) or to choose another
 
-Everything is written in python 3.8 and has no dependencies beyond the standard python library.
+### Dependencies
+Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
 
-#### Release Notes:<br />
+### Release Notes:<br />
 __0.6.1__ slackstack now searches the local __python library__ to see if the program being built or its dependencies are already installed.  If /var/lib/pkgtools/packages/ doesn't contain a search hit, slackstack uses Python's pkg_resources tool to search local pip files.  This search is pretty robust; it will first look for exact hits and if none are found it performs a second fuzzier search.<br />
 * Python libraries in the SBo have some naming oddities that slackstack handles.  For example, if the slackbuild calls for python3-Flask, slackstack knows to search for "Flask" since the former will return no hit even if Flask is actually installed via pip.  It doesn't matter if the order is reversed either, as with gst-python3.<br />
 * The fuzzy search is meant to alert the user to scenarios like py3cairo vs pycairo -- if the slackbuild calls for py3cairo, slackstack will alert the user that pycairo is installed and they can determine for themselves if the dependency is met.<br />
@@ -33,7 +34,7 @@ __0.5.0__ slackgrab is a major revision.  The code is cleaner and handles *.info
 * Programs with multiple (unlimited) binaries are now supported.  This means things like the Nvidia driver are downloaded and verified correctly<br />
 * The code now supports slackbuild *.info files where the tarball htmls are located in either the DOWNLOADS_x86_64 area or the DOWNLOADS area.  There is some variation among slackbuilds, so the program checks the x86 location first and moves to the other one if nothing is found.
 
-Near-term goals:<br />
+### Near-term goals:<br />
 * [DONE] add support for local pip libraries
 * [DONE] add support for multiple binary builds
 * combine utilities into one program
