@@ -3,7 +3,12 @@
 The goal of Slackutils is to make working with slackbuilds easier.
 
 #### Release Notes:<br />
-0.5.3 slackstack has one important new feature -- now it searchs the computer to see if the program being built is already installed.  If the program or any of its dependencies are installed, it adds asterisks to the relevant entries in the installseq.txt file and shows [INSTALLED] on the screen output. 
+0.6.1 slackstack now searches the local python library to see if the program being built or its dependencies are already installed.  If /var/lib/pkgtools/packages/ doesn't contain a search hit, slackstack uses Python's pkg_resources tool to search local pip files.  This search is pretty robust; it will first look for exact hits and if non are found it performs a second fuzzier search.
+** Python libraries in the SBo have some naming convention oddities that slackstack handles.  For example, if the slackbuild calls for python3-Flask, slackstack knows to search for "Flask" since the former will return no hit even if Flask is actually installed via pip.  It doesn't matter if the order is reversed as with gst-python3.
+** The fuzzy search is meant to alert the user to scenarios like py3cairo vs pycairo -- if the slackbuild calls for py3cairo, slackstack will alert the user that pycairo is installed and they can determine for themselves if the dependency is met.
+** Version numbers are now shown.  If slackstack finds the program it's building or a dependency already installed, it shows the version number of the installed program.
+
+0.5.3 slackstack has one important new feature -- now it searches the computer to see if the program being built or its dependencies are already installed.  In either case, it adds asterisks to the relevant entries in the installseq.txt file and shows [INSTALLED] on the screen output.
 
 0.5.0 slackgrab is a major revision.  The code is cleaner and handles *.info files in a more efficient manner.<br />
 ** Programs with multiple (unlimited) binaries are now supported.  This means things like the Nvidia driver are downloaded and verified correctly<br />
@@ -17,7 +22,7 @@ Uses a local clone of the slackbuilds.org git repository <br />
 1. Searches for a program in the local clone or user folder<br />
 2. Copies the slackbuild to a 'build' directory --> default = ~/slackstack/[program_name]-tree<br />
 3. Scans the slackbuild for dependencies and copies *those* slackbuilds to the build directory<br />
-4. Recursively scans all dependecies for additional dependencies... and so on until every *needed* slackbuild has been copied to the build directory<br />
+4. Recursively scans all dependencies for additional dependencies... and so on until every *needed* slackbuild has been copied to the build directory<br />
 5. Creates a text file to show the installation order of the slackbuilds
 6. Sets the *.SlackBuild file permissions in each folder to executable
 
@@ -30,11 +35,12 @@ Uses a local clone of the slackbuilds.org git repository <br />
 Everything is written in python 3.8 and has no dependencies beyond the standard python library.
 
 Near-term goals:<br />
+* [DONE] add support for local pip libraries
 * [DONE] add support for multiple binary builds
 * combine utilities into one program
 * [DONE] Add user input to select directories<br />
 * [DONE] Add slackgrab option to traverse multiple slackbuild directories and download tar files for each<br />
 * [PHASE1] Maybe add 32-bit support<br />
 * [DONE] Search a local database for available slackbuilds (e.g., a local git clone of the slackbuilds repo)<br />
-* Search a remote databse for available slackbuilds (e.g., slackbuilds.org)<br />
+* Search a remote database for available slackbuilds (e.g., slackbuilds.org)<br />
 
