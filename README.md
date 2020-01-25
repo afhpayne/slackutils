@@ -3,7 +3,7 @@
 The goal of Slackutils is to make working with slackbuilds easier.
 
 #### Release Notes:<br />
-__0.6.1__ slackstack now searches the local python library to see if the program being built or its dependencies are already installed.  If /var/lib/pkgtools/packages/ doesn't contain a search hit, slackstack uses Python's pkg_resources tool to search local pip files.  This search is pretty robust; it will first look for exact hits and if non are found it performs a second fuzzier search.<br />
+__0.6.1__ slackstack now searches the local __python library__ to see if the program being built or its dependencies are already installed.  If /var/lib/pkgtools/packages/ doesn't contain a search hit, slackstack uses Python's pkg_resources tool to search local pip files.  This search is pretty robust; it will first look for exact hits and if non are found it performs a second fuzzier search.<br />
 ** Python libraries in the SBo have some naming convention oddities that slackstack handles.  For example, if the slackbuild calls for python3-Flask, slackstack knows to search for "Flask" since the former will return no hit even if Flask is actually installed via pip.  It doesn't matter if the order is reversed as with gst-python3.<br />
 ** The fuzzy search is meant to alert the user to scenarios like py3cairo vs pycairo -- if the slackbuild calls for py3cairo, slackstack will alert the user that pycairo is installed and they can determine for themselves if the dependency is met.<br />
 ** Version numbers are now shown.  If slackstack finds the program it's building or a dependency already installed, it shows the version number of the installed program.<br />
