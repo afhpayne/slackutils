@@ -5,7 +5,7 @@ soft_name = "Slackgrab"
 soft_tag  = "a slackbuild tarball and binary downloader"
 
 # Version
-soft_vers = "0.5.0"
+soft_vers = "0.5.1"
 
 import urllib.request
 import shutil
@@ -13,6 +13,7 @@ import os
 import glob
 import hashlib
 import re
+import readline
 
 os.system("clear")
 welstr = ("Welcome to " + soft_name + " version " + soft_vers + ", " + soft_tag + ".")
