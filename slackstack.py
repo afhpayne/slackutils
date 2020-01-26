@@ -5,11 +5,12 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.6.1"
+soft_vers = "0.6.2"
 
 import os
 import shutil
 import glob
+import readline
 import stat
 import pkg_resources
 
