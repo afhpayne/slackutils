@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.6.2"
+soft_vers = "0.7.0"
 
 import os
 import shutil
@@ -82,6 +82,33 @@ else:
             except FileExistsError:
                 pass
 
+def get_version_of_prog_name():
+    infofile = glob.glob(os.path.join(dir_path, prog_name, "*.info"))
+    global version_prog_name
+    if infofile:
+        infofile = infofile[0]
+        with open(infofile) as gvoc:
+            infofile = gvoc.read()
+        gvoc.closed
+        for line in infofile.split("\n"):
+            if "VERSION=" in line:
+                version_prog_name = line.strip()
+                version_prog_name = version_prog_name.split('"')[1]
+
+def get_version_of_dep():
+    infofile = glob.glob(os.path.join(dir_path, dep, "*.info"))
+    global version_dep
+    if infofile:
+        infofile = infofile[0]
+        with open(infofile) as gvoc:
+            infofile = gvoc.read()
+        gvoc.closed
+        for line in infofile.split("\n"):
+            if "VERSION=" in line:
+                version_dep = line.strip()
+                version_dep = version_dep.split('"')[1]
+
+                
 #list1_checked_for_deps.append(prog_name)
 def iterate_for_dependecies():
     for dir in os.listdir(os.path.join(dir_path)):
@@ -145,7 +172,12 @@ def iterate_for_permissions():
             os.chmod(os.path.join(buildfile), ( stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH ))
 
 for w in range(10):
-    iterate_for_dependecies()
+    try:
+        iterate_for_dependecies()
+    except FileNotFoundError:
+        print("\nPlease check spelling and CAPS, --> " + prog_name + " <-- was not found in " + dir_git + ". \n")
+        exit(1)
+
 
 iterate_for_permissions()
 
@@ -180,7 +212,8 @@ for dep in list3_install_seq:
                             f.write(dep_status + "\n")
                             x += 1
                     if x == 0:
-                        print(dep)
+                        get_version_of_dep()
+                        print(dep, version_dep)
                 else:
                     dep_base_check = str(dep_base_check[1].rstrip("0123456789"))
                     x = 0
@@ -192,7 +225,8 @@ for dep in list3_install_seq:
                             f.write(dep_status + "\n")
                             x += 1
                     if x == 0:
-                        print(dep)
+                        get_version_of_dep()
+                        print(dep, version_dep)
             elif "py" in dep:
                 dep_soft_check = ''.join([letter for letter in dep if not letter.isdigit()])
                 y = 0
@@ -205,10 +239,12 @@ for dep in list3_install_seq:
                         f.write(dep_status + "\n")
                         y += 1
                 if y == 0:
-                    print(dep)
+                    get_version_of_dep()
+                    print(dep, version_dep)
                     f.write(dep + "\n")
             else:
-                print(dep)
+                get_version_of_dep()
+                print(dep, version_dep)
                 f.write(dep + "\n")
 
 print("\n" + "for..." + "\n")
@@ -234,7 +270,8 @@ elif "python" in prog_base:
                 f.write(app_status + "\n")
                 x += 1
         if x == 0:
-            print(prog_base)
+            get_version_of_prog_name()
+            print(prog_base, version_prog_name)
     else:
         prog_base_check = str(prog_base_check[1].rstrip("0123456789"))
         x = 0
@@ -246,9 +283,11 @@ elif "python" in prog_base:
                 f.write(app_status + "\n")
                 x += 1
         if x == 0:
-            print(prog_base)
+            get_version_of_prog_name()
+            print(prog_base, version_prog_name)
 else:
-    print(prog_base)
+    get_version_of_prog_name()
+    print(prog_base, version_prog_name)
     f.write(prog_base + "\n")
 
 f.close()
