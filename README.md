@@ -23,6 +23,8 @@ Uses a local clone of the slackbuilds.org git repository <br />
 Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
 
 ### Release Notes:<br />
+__0.7.0__ Slackstack now shows the version of the software being sourced from your local slackbuilds git clone.  Now you'll see exactly what version you're about to build of the program you want and all its dependencies too.  Also Slackstack now handles a mispelled program request more gracefully.<br />
+__0.6.2__ Bug fixes<br />
 __0.6.1__ slackstack now searches the local __python library__ to see if the program being built or its dependencies are already installed.  If /var/lib/pkgtools/packages/ doesn't contain a search hit, slackstack uses Python's pkg_resources tool to search local pip files.  This search is pretty robust; it will first look for exact hits and if none are found it performs a second fuzzier search.<br />
 * Python libraries in the SBo have some naming oddities that slackstack handles.  For example, if the slackbuild calls for python3-Flask, slackstack knows to search for "Flask" since the former will return no hit even if Flask is actually installed via pip.  It doesn't matter if the order is reversed either, as with gst-python3.<br />
 * The fuzzy search is meant to alert the user to scenarios like py3cairo vs pycairo -- if the slackbuild calls for py3cairo, slackstack will alert the user that pycairo is installed and they can determine for themselves if the dependency is met.<br />
