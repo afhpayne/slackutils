@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.7.0"
+soft_vers = "0.7.1"
 
 import os
 import shutil
@@ -21,7 +21,10 @@ print("\n" + welstr)
 prog_base      = input("\nWhat program are we building? ")
 prog_name      = prog_base.strip()
 prog_build_dir = prog_name + "-tree"
-dir_personal   = os.path.join(os.environ['HOME'], "slackware", "slackbuilds15", "")
+
+# This is where we set the path for a personal repo:
+dir_personal   = os.path.join(os.environ['HOME'], "slackware", "dbs_slackware", "")
+# This is where we set the path for the slackbuilds repo clone
 dir_git        = os.path.join(os.environ['HOME'], "slackbuilds", "")
 dir_path       = os.path.join(os.environ['HOME'], "slackstack", prog_build_dir, "")
 
@@ -107,7 +110,7 @@ def get_version_of_dep():
             if "VERSION=" in line:
                 version_dep = line.strip()
                 version_dep = version_dep.split('"')[1]
-
+                
                 
 #list1_checked_for_deps.append(prog_name)
 def iterate_for_dependecies():
@@ -181,23 +184,25 @@ for w in range(10):
 
 iterate_for_permissions()
 
-print("\nAdding dependencies:")
+print("\nAdding dependencies:\n")
 for dep in list2_is_a_dep[::-1]:
     if dep not in list3_install_seq:
         list3_install_seq.append(dep)
 
 f = open(os.path.join(os.environ['HOME'], dir_path, "installseq.txt"), "a")
+f.write("Install order:\n")
 for dep in list3_install_seq:
     if dep:
         if os.path.isdir(os.path.join(dir_path, dep)):
             dep_trace = glob.glob("/var/lib/pkgtools/packages/" + dep + "-" + "*")
             if dep_trace:
-                dep_status = (dep + " [INSTALLED]")
-                print(dep_status)
-                f.write(dep_status + "\n")
+                get_version_of_dep()
                 dep_show = dep_trace.pop().split("/")
                 dep_show = dep_show[5]
-                print("--> version is " + dep_show + "\n")
+                dep_status = ("--> [INSTALLED] version is " + dep_show)
+                print(dep + " " + version_dep)
+                print(dep_status + "\n")
+                f.write(dep + " " + version_dep + " " + dep_status + "\n")
             elif "python" in dep:
                 dep_base_check = dep.split("-")
                 if dep_base_check[1] == "python" or dep_base_check[1] == "python3":
@@ -206,57 +211,83 @@ for dep in list3_install_seq:
                     for i in pkg_resources.working_set:
                         j = str(i).lower().find(dep_base_check.lower())
                         if j > -1:
-                            dep_status = (dep + " [INSTALLED] (in python library)")
-                            print(dep_status)
-                            print("--> version is", i, "\n")
-                            f.write(dep_status + "\n")
+                            ver_num = str(i).strip("'")
+                            ver_num = ver_num
+                            get_version_of_dep()
+                            dep_status = ("--> [INSTALLED] version is: " + ver_num + " (Python library)")
+                            print(dep + " " + version_dep)
+                            print(dep_status + "\n")
+                            f.write(dep + " " + version_dep + " " + dep_status + "\n")
                             x += 1
                     if x == 0:
                         get_version_of_dep()
-                        print(dep, version_dep)
+                        print(dep + " " + version_dep + "\n")
+                        f.write(dep + " " + version_dep + "\n")
                 else:
                     dep_base_check = str(dep_base_check[1].rstrip("0123456789"))
                     x = 0
                     for i in pkg_resources.working_set:
                         j = str(i).lower().find(dep_base_check.lower())
                         if j > -1:
-                            dep_status = (dep + " [INSTALLED] (in python library)")
+                            ver_num = str(i).strip("'")
+                            ver_num = ver_num
+                            get_version_of_dep()
+                            dep_status = ("--> [INSTALLED] version is: " + ver_num + " (Python library)")
+                            print(dep + " " + version_dep)
                             print(dep_status + "\n")
-                            f.write(dep_status + "\n")
+                            f.write(dep + " " + version_dep + " " + dep_status + "\n")
                             x += 1
                     if x == 0:
                         get_version_of_dep()
-                        print(dep, version_dep)
+                        print(dep + " " + version_dep + "\n")
+                        f.write(dep + " " + version_dep + "\n")
             elif "py" in dep:
                 dep_soft_check = ''.join([letter for letter in dep if not letter.isdigit()])
                 y = 0
                 for i in pkg_resources.working_set:
                     j = str(i).lower().find(dep_soft_check.lower())
                     if j > -1:
-                        dep_status = (dep + " [*MAY* BE INSTALLED] (in python library)")
-                        print(dep_status)
-                        print("--> version is", i, "\n")
-                        f.write(dep_status + "\n")
+                        ver_num = str(i).strip("'")
+                        ver_num = ver_num
+                        get_version_of_dep()
+                        dep_status = ("--> [MAY BE INSTALLED] found: " + ver_num + " (Python library)")
+                        print(dep + " " + version_dep)
+                        print(dep_status + "\n")
+                        f.write(dep + " " + version_dep + " " + dep_status + "\n")
                         y += 1
                 if y == 0:
                     get_version_of_dep()
-                    print(dep, version_dep)
-                    f.write(dep + "\n")
+                    print(dep + " " +  version_dep + "\n")
+                    f.write(dep + " " + version_dep + "\n")
             else:
-                get_version_of_dep()
-                print(dep, version_dep)
-                f.write(dep + "\n")
+                x = 0
+                for i in pkg_resources.working_set:
+                    j = str(i).lower().find(dep.lower())
+                    if j > -1:
+                        ver_num = str(i).strip("'")
+                        ver_num = ver_num
+                        get_version_of_dep()
+                        dep_status = ("--> [MAY BE INSTALLED] found: " + ver_num + " (Python library)")
+                        print(dep + " " + version_dep)
+                        print(dep_status, "\n")
+                        f.write(dep + " " + version_dep + " " + dep_status + "\n")
+                        x += 1
+                if x == 0:
+                    get_version_of_dep()
+                    print(dep + " " + version_dep + "\n")
+                    f.write(dep + " " + version_dep + "\n")
 
-print("\n" + "for..." + "\n")
+print("\nfor..." + "\n")
 
 app_trace = glob.glob("/var/lib/pkgtools/packages/" + prog_base + "-" + "*")
 if app_trace:
-    app_status = (prog_base + " [INSTALLED]")
-    print(app_status)
-    f.write(app_status + "\n")
+    get_version_of_prog_name()
     app_show = app_trace.pop().split("/")
     app_show = app_show[5]
-    print("--> version is " + app_show + "\n")
+    app_status = ("--> [INSTALLED] version is: " + app_show + "\n")
+    print(prog_base + " " + version_prog_name)
+    print(app_status)
+    f.write(prog_base + " " + version_prog_name + " " + app_status + "\n")
 elif "python" in prog_base:
     prog_base_check = prog_base.split("-")
     if prog_base_check[1] == "python" or prog_base_check[1] == "python3":
@@ -265,31 +296,63 @@ elif "python" in prog_base:
         for i in pkg_resources.working_set:
             j = str(i).lower().find(prog_base_check.lower())
             if j > -1:
-                app_status = (prog_base + " [INSTALLED] (in python library)")
-                print(app_status)
-                f.write(app_status + "\n")
+                app_status = ("--> [INSTALLED] version is: " + version_prog_name + "(in python library)")
+                print(prog_base + " " + app_status + "\n")
+                f.write(prog_base + " " + app_status + "\n")
                 x += 1
         if x == 0:
             get_version_of_prog_name()
-            print(prog_base, version_prog_name)
+            print(prog_base + " " + version_prog_name + "\n")
+            f.write(prog_base + " " + version_prog_name + "\n")
     else:
         prog_base_check = str(prog_base_check[1].rstrip("0123456789"))
         x = 0
         for i in pkg_resources.working_set:
             j = str(i).lower().find(prog_base_check.lower())
             if j > -1:
-                app_status = (prog_base + " [INSTALLED] (in python library)")
-                print(app_status)
-                f.write(app_status + "\n")
+                app_status = ("--> [INSTALLED] version is: " + version_prog_name + " (Python library)")
+                print(prog_base + " " + app_status + "\n")
+                f.write(prog_base + " " + app_status + "\n")
                 x += 1
         if x == 0:
             get_version_of_prog_name()
-            print(prog_base, version_prog_name)
+            print(prog_base + " " + version_prog_name + "\n")
+            f.write(prog_base + " " + version_prog_name + "\n")
+elif "py" in prog_base:
+    prog_soft_check = ''.join([letter for letter in dep if not letter.isdigit()])
+    y = 0
+    for i in pkg_resources.working_set:
+        j = str(i).lower().find(prog_soft_check.lower())
+        if j > -1:
+            ver_num = str(i).strip("'")
+            ver_num = ver_num
+            get_version_of_prog_name()
+            prog_status = ("--> [MAY BE INSTALLED] found: " + ver_num + " (Python library)")
+            print(prog_name + " " + version_prog_name)
+            print(prog_status, "\n")
+            f.write(prog_base + " " + version_prog_name + " " + prog_status + "\n")
+            y += 1
+    if y == 0:
+        get_version_of_prog_name()
+        print(prog_base + " " + version_prog_name + "\n")
+        f.write(prog_base + "\n")
 else:
-    get_version_of_prog_name()
-    print(prog_base, version_prog_name)
-    f.write(prog_base + "\n")
-
+    x = 0
+    for i in pkg_resources.working_set:
+        j = str(i).lower().find(prog_base.lower())
+        if j > -1:
+            ver_num = str(i).strip("'")
+            ver_num = ver_num
+            get_version_of_prog_name()
+            prog_status = ("--> [MAY BE INSTALLED] found: " + ver_num + " (Python library)")
+            print(prog_base + " " + version_prog_name)
+            print(prog_status, "\n")
+            f.write(prog_base + " " + version_prog_name + " " + prog_status + "\n")
+            x += 1
+    if x == 0:
+        get_version_of_prog_name()
+        print(prog_base + " " + version_prog_name + "\n")
+        f.write(prog_base + " " + version_prog_name + "\n")
 f.close()
 
 print("\nto", dir_path, "\n")
