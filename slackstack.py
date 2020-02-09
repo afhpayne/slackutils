@@ -5,44 +5,85 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.8.0"
+soft_vers = "0.8.1"
 
-import os
-import shutil
 import glob
+import os
+import pkg_resources
 import re
 import readline
+import shutil
 import stat
-import pkg_resources
+import subprocess
+import time
 
-os.system("clear")
-welstr = ("Welcome to " + soft_name + " version " + soft_vers + ", " + soft_tag + ".")
-print("\n" + welstr)
+def hello_string():
+    os.system("clear")
+    welstr = ("Welcome to " + soft_name + " version " + soft_vers + ", " + soft_tag + ".")
+    print("\n" + welstr)
+    print("")
+hello_string()
+    
+# This is where we set the path for a personal repo, slackbuilds in here get priority
+dir_personal   = os.path.join(os.environ['HOME'], "slackware", "dbs_slackware", "")
+# This is the path where slackstack assembles the builds
+dir_stack      = os.path.join(os.environ['HOME'], "slackstack", "")
+# This is where the local slackbuilds git repo is stored
+dir_git        = os.path.join(os.environ['HOME'], "slackstack", "slackbuilds", "")
+
+try:
+    os.mkdir(os.path.join(dir_stack))
+except(FileExistsError):
+    pass
+
+if os.path.isdir(os.path.join(dir_stack, "slackbuilds", "")):
+    print("Found " + os.path.join(dir_stack, "slackstack", ""))
+    print("Performing git pull...")
+    git_fail = (subprocess.call(["git", "-C", os.path.join(dir_stack, "slackbuilds", ""), "pull"]))
+    if git_fail > 0:
+        time.sleep(2)
+        hello_string()
+        print("Found local Slackbuild repo but can't update. Moving on.")
+    else:
+        subprocess.run(["git", "-C", os.path.join(dir_stack, "slackbuilds", ""), "pull"])
+        time.sleep(1)
+        hello_string()
+        print("Local Slackbuild repo up to date.")
+else:
+    print("Local copy of slackbuilds git not found in " + os.path.join(dir_stack, ""))
+    make_local_git = input("Clone it now? y/n ")
+    if make_local_git == "y" or make_local_git == "Y":
+        git_fail = (subprocess.call(["git", "clone", "https://gitlab.com/SlackBuilds.org/slackbuilds.git", os.path.join(dir_stack, "slackbuilds", "")]))
+        if git_fail > 0:
+            time.sleep(2)
+            hello_string()
+            print("Can't create a local Slackbuilds repo.  Do you have internet?")
+            exit(1)
+        else:
+            subprocess.run(["git", "clone", "https://gitlab.com/SlackBuilds.org/slackbuilds.git", os.path.join(dir_stack, "slackbuilds", "")])
+            time.sleep(1)
+            hello_string()
+            print("Local Slackbuild repo up to date.")
+    else:
+        print("Please create a local clone to use slackstack")
+        exit(1)
+
+check_path = glob.glob(os.path.join(os.environ['HOME'], "slackstack", "*tree", ""))
+if check_path:
+    check_path = (check_path[0].strip())
+    print("\nFound a previous build:", check_path)
+    remove_or_quit = input("(r)emove or (q)uit? ")
+    if remove_or_quit == "R" or remove_or_quit == "r":
+        shutil.rmtree(os.path.join(check_path))
+    else:
+        exit(1)
 
 prog_base      = input("\nWhat program are we building? ")
 prog_name      = prog_base.strip()
-prog_build_dir = prog_name + "-tree"
+prog_build_dir = (prog_name + "-tree")
 
-# This is where we set the path for a personal repo:
-dir_personal   = os.path.join(os.environ['HOME'], "slackware", "dbs_slackware", "")
-# This is where we set the path for the slackbuilds repo clone
-dir_git        = os.path.join(os.environ['HOME'], "slackbuilds", "")
-dir_path       = os.path.join(os.environ['HOME'], "slackstack", prog_build_dir, "")
-
-try:
-    os.mkdir(os.path.join(os.environ['HOME'], "slackstack"))
-except FileExistsError:
-    check_path = os.path.join(os.environ['HOME'], "slackstack")
-    for dir in os.scandir(check_path):
-        path_name = str(dir).split("'")[1]
-        print("\nThe build directory contains: ", path_name)
-        remove_or_quit = input("(r)emove or (q)uit? ")
-        if remove_or_quit == "R" or remove_or_quit == "r":
-            shutil.rmtree(os.path.join(check_path, path_name))
-        else:
-            exit(1)
-
-print("\nBuild directory =", os.path.join(os.environ['HOME'], dir_path, ""))
+dir_path = os.path.join(os.environ['HOME'], "slackstack", prog_build_dir, "")
+print("\nBuild directory =", dir_path)
 
 dirs = ['academic',
         'accessibility',
@@ -71,7 +112,7 @@ list3_install_seq = []
 
 path_to_prog = os.path.join(dir_personal + prog_name)
 if os.path.isdir(path_to_prog):
-    print("\nFound", os.path.join(path_to_prog))
+    # print("\nFound", os.path.join(path_to_prog))
     try:
         shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
     except FileExistsError:
@@ -80,7 +121,7 @@ else:
     for dir in dirs:
         path_to_prog = (dir_git + dir + "/" + prog_name)
         if os.path.isdir(path_to_prog):
-            print("\nFound:", os.path.join(path_to_prog))
+            # print("\nFound:", os.path.join(path_to_prog))
             try:
                 shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
             except FileExistsError:
