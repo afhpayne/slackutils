@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.8.1"
+soft_vers = "0.8.2"
 
 import glob
 import os
@@ -45,7 +45,6 @@ if os.path.isdir(os.path.join(dir_stack, "slackbuilds", "")):
         hello_string()
         print("Found local Slackbuild repo but can't update. Moving on.")
     else:
-        subprocess.run(["git", "-C", os.path.join(dir_stack, "slackbuilds", ""), "pull"])
         time.sleep(1)
         hello_string()
         print("Local Slackbuild repo up to date.")
@@ -55,18 +54,16 @@ else:
     if make_local_git == "y" or make_local_git == "Y":
         git_fail = (subprocess.call(["git", "clone", "https://gitlab.com/SlackBuilds.org/slackbuilds.git", os.path.join(dir_stack, "slackbuilds", "")]))
         if git_fail > 0:
-            time.sleep(2)
-            hello_string()
-            print("Can't create a local Slackbuilds repo.  Do you have internet?")
+            print("\nCan't create a local Slackbuilds repo.  Do you have internet?\n")
             exit(1)
         else:
-            subprocess.run(["git", "clone", "https://gitlab.com/SlackBuilds.org/slackbuilds.git", os.path.join(dir_stack, "slackbuilds", "")])
             time.sleep(1)
             hello_string()
             print("Local Slackbuild repo up to date.")
     else:
         print("Please create a local clone to use slackstack")
         exit(1)
+
 
 check_path = glob.glob(os.path.join(os.environ['HOME'], "slackstack", "*tree", ""))
 if check_path:
