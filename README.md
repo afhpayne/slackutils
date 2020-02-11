@@ -23,15 +23,16 @@ Uses a local clone of the slackbuilds.org git repository <br />
 Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
 
 ### Release Notes:<br />
+__0.8.2__ Bug fixes and cleanup<br />
+__0.8.1__ Slackstack now clones the Slackbuild repo to the local drive and keeps it up-to-date with every launch.  Lack of internet is handled gracefully too.<br />
+__0.8.0__ This is another major overhaul.  Slackstack's ability to correctly identify already installed software is improved: (1) it's faster and more a lot more efficient and (2) it's more robust.  Python libraries in particular are now much more reliably identified if the user has things in pip.  The visual layout is upgraded to allow easier comparison of requested vs. installed software versions too.<br />
 __0.7.0__ Slackstack now shows the version of the software being sourced from your local slackbuilds git clone.  Now you'll see exactly what version you're about to build of the program you want and all its dependencies too.  Also Slackstack now handles a mispelled program request more gracefully.<br />
 __0.6.2__ Bug fixes<br />
 __0.6.1__ slackstack now searches the local __python library__ to see if the program being built or its dependencies are already installed.  If /var/lib/pkgtools/packages/ doesn't contain a search hit, slackstack uses Python's pkg_resources tool to search local pip files.  This search is pretty robust; it will first look for exact hits and if none are found it performs a second fuzzier search.<br />
 * Python libraries in the SBo have some naming oddities that slackstack handles.  For example, if the slackbuild calls for python3-Flask, slackstack knows to search for "Flask" since the former will return no hit even if Flask is actually installed via pip.  It doesn't matter if the order is reversed either, as with gst-python3.<br />
 * The fuzzy search is meant to alert the user to scenarios like py3cairo vs pycairo -- if the slackbuild calls for py3cairo, slackstack will alert the user that pycairo is installed and they can determine for themselves if the dependency is met.<br />
 * Version numbers are now shown.  If slackstack finds the program it's building or a dependency already installed, it shows the version number of the installed program.<br />
-
 __0.5.3__ slackstack has one important new feature -- now it searches the computer to see if the program being built or its dependencies are already installed.  In either case, it adds asterisks to the relevant entries in the installseq.txt file and shows [INSTALLED] on the screen output.
-
 __0.5.0__ slackgrab is a major revision.  The code is cleaner and handles *.info files in a more efficient manner.<br />
 * Programs with multiple (unlimited) binaries are now supported.  This means things like the Nvidia driver are downloaded and verified correctly<br />
 * The code now supports slackbuild *.info files where the tarball htmls are located in either the DOWNLOADS_x86_64 area or the DOWNLOADS area.  There is some variation among slackbuilds, so the program checks the x86 location first and moves to the other one if nothing is found.
