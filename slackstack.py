@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.8.2"
+soft_vers = "0.8.3"
 
 import glob
 import os
@@ -230,28 +230,36 @@ for dep in list2_is_a_dep[::-1]:
             list3_install_seq.append(dep.lower())
 list3_install_seq.append(prog_name)
 
-app_ver_search = re.compile("-[^a-z]+[\S]*[a-z]*")
-tag_search = re.compile('-[x|n].*')
+app_data_search = re.compile("-[^a-z]+[\S]*[a-z]*")
+app_ver_search = re.compile('-[x|n].*')
+app_tag_search = re.compile("_\w+$")
 
 # Dictionary of installed programs and version numbers
 package_dict = {}
 for p in os.listdir("/var/lib/pkgtools/packages/"):
-    app_tag = app_ver_search.search(p)
-    app_name = p.replace(app_tag.group(0), "")
-    try:
-        ver_tag = tag_search.search(app_tag.group(0))
-        app_vers = app_tag.group(0).replace(ver_tag.group(0), "").lstrip("-")    
-    except(AttributeError):
-        app_vers = (app_tag.group(0) + " (malformed vers number)")
+    app_data_match = app_data_search.search(p)
+    app_name = p.replace(app_data_match.group(0), "")
+    # try:
+    app_arch_match = app_ver_search.search(app_data_match.group(0))
+    if app_arch_match is not None:
+        app_vers = app_data_match.group(0).replace(app_arch_match.group(0), "").lstrip("-")
+    else:
+        app_vers = app_data_match
+        app_vers = app_vers.group(0)
+    app_tag_match = app_tag_search.search(p)
+    if app_tag_match is not None:
+        app_tag = app_tag_match.group(0).lstrip("_")
+        app_vers = (app_vers + " (" + app_tag + ")")
+    else:
+        app_vers = app_vers
     package_dict.update([(app_name.lower(),app_vers)])
-
+    
 # Dictionary of python programs and versions
 python_dict  = {}
 for i in pkg_resources.working_set:
     i = str(i).split()
     if i[0] not in python_dict:
         python_dict.update([(i[0].lower(),i[1])])
-
 
 # Start the search
 f = open(os.path.join(os.environ['HOME'], dir_path, "installseq.txt"), "a")
