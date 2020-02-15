@@ -23,8 +23,9 @@ Uses a local clone of the slackbuilds.org git repository <br />
 Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
 
 ### Release Notes:<br />
-__0.8.3__ Slackstack now reads tags.  Any custom tag on installed software is read and displayed.  This works for SBo software or custom tags (if you use them).  You can now see if something you wish to install will overwrite a base package.  If you're running -current, this is handy because SBo dependencies reference the 14.2 base system and a lot has been added to -current.
-__0.8.2__ Bug fixes and cleanup<br />
+__0.8.4__ Code cleanup, also the SBo dirs list is no longer hardcoded but is now dynamically updated.  Slackstack now asks if the user wants to proceed to Slackgrab to get tarballs.<br />
+__0.8.3__ Slackstack now reads tags.  Any custom tag on installed software is read and displayed.  This works for SBo software or custom tags (if you use them).  You can now see if something you wish to install will overwrite a base package.  If you're running -current, this is handy because SBo dependencies reference the 14.2 base system and a lot has been added to -current.<br />
+__0.8.2__ Bug fixes and cleanup.<br />
 __0.8.1__ Slackstack now clones the Slackbuild repo to the local drive and keeps it up-to-date with every launch.  Lack of internet is handled gracefully too.<br />
 __0.8.0__ This is another major overhaul.  Slackstack's ability to correctly identify already installed software is improved: (1) it's faster and more a lot more efficient and (2) it's more robust.  Python libraries in particular are now much more reliably identified if the user has things in pip.  The visual layout is upgraded to allow easier comparison of requested vs. installed software versions too.<br />
 __0.7.0__ Slackstack now shows the version of the software being sourced from your local slackbuilds git clone.  Now you'll see exactly what version you're about to build of the program you want and all its dependencies too.  Also Slackstack now handles a mispelled program request more gracefully.<br />
