@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.8.5"
+soft_vers = "0.8.6"
 
 import glob
 import os
@@ -299,7 +299,7 @@ print("\nto", dir_path, "\n")
 
 grab_y_n = input("Run slackgrab.py to get the tarballs (y/n)? ")
 if grab_y_n == "Y" or grab_y_n == "y":
-    subprocess.run(["slackgrab.py"])
+    subprocess.run(["slackgrab.py", "--skip"])
     exit(0)
 else:
     exit(0)
