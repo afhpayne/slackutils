@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.8.4"
+soft_vers = "0.8.5"
 
 import glob
 import os
@@ -203,7 +203,7 @@ app_tag_search = re.compile("_\w+$")
 
 # Dictionary of installed programs and version numbers
 package_dict = {}
-for p in os.listdir("/var/lib/pkgtools/packages/"):
+for p in os.listdir("/var/log/packages/"):
     app_data_match = app_data_search.search(p)
     app_name = p.replace(app_data_match.group(0), "")
     # try:
