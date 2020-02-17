@@ -22,7 +22,8 @@ Uses a local clone of the slackbuilds.org git repository <br />
 ### Dependencies
 Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
 
-### Release Notes:<br />
+### Release Notes for Slackstack:<br />
+__0.8.6__ Added support for Slackgrab --skip argument.
 __0.8.5__ Moved local app search to /var/log/packages for compatibility with 14.2 and current.<br />
 __0.8.4__ Code cleanup, also the SBo dirs list is no longer hardcoded but is now dynamically updated.  Slackstack now asks if the user wants to proceed to Slackgrab to get tarballs.<br />
 __0.8.3__ Slackstack now reads tags.  Any custom tag on installed software is read and displayed.  This works for SBo software or custom tags (if you use them).  You can now see if something you wish to install will overwrite a base package.  If you're running -current, this is handy because SBo dependencies reference the 14.2 base system and a lot has been added to -current.<br />
@@ -37,6 +38,9 @@ __0.6.1__ slackstack now searches the local __python library__ to see if the pro
 * Version numbers are now shown.  If slackstack finds the program it's building or a dependency already installed, it shows the version number of the installed program.<br />
 
 __0.5.3__ slackstack has one important new feature -- now it searches the computer to see if the program being built or its dependencies are already installed.  In either case, it adds asterisks to the relevant entries in the installseq.txt file and shows [INSTALLED] on the screen output.<br />
+
+### Release Notes for Slackgrab:<br />
+__0.5.2__ Added --skip (or -s) flag to skip prompting for download location.<br />
 __0.5.0__ slackgrab is a major revision.  The code is cleaner and handles *.info files in a more efficient manner.<br />
 * Programs with multiple (unlimited) binaries are now supported.  This means things like the Nvidia driver are downloaded and verified correctly<br />
 * The code now supports slackbuild *.info files where the tarball htmls are located in either the DOWNLOADS_x86_64 area or the DOWNLOADS area.  There is some variation among slackbuilds, so the program checks the x86 location first and moves to the other one if nothing is found.
