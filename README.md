@@ -23,6 +23,7 @@ Uses a local clone of the slackbuilds.org git repository <br />
 Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
 
 ### Release Notes:<br />
+__0.8.5__ Moved local app search to /var/log/packages for compatibility with 14.2 and current.<br />
 __0.8.4__ Code cleanup, also the SBo dirs list is no longer hardcoded but is now dynamically updated.  Slackstack now asks if the user wants to proceed to Slackgrab to get tarballs.<br />
 __0.8.3__ Slackstack now reads tags.  Any custom tag on installed software is read and displayed.  This works for SBo software or custom tags (if you use them).  You can now see if something you wish to install will overwrite a base package.  If you're running -current, this is handy because SBo dependencies reference the 14.2 base system and a lot has been added to -current.<br />
 __0.8.2__ Bug fixes and cleanup.<br />
