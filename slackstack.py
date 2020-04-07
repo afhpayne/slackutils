@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.8.6"
+soft_vers = "0.8.7"
 
 import glob
 import os
@@ -187,7 +187,6 @@ for w in range(10):
         print("\nPlease check spelling and CAPS, --> " + prog_name + " <-- was not found in " + dir_git + ". \n")
         exit(1)
 
-
 iterate_for_permissions()
 
 print("\nAdding dependencies for: " + prog_name + "\n")
@@ -299,7 +298,18 @@ print("\nto", dir_path, "\n")
 
 grab_y_n = input("Run slackgrab.py to get the tarballs (y/n)? ")
 if grab_y_n == "Y" or grab_y_n == "y":
-    subprocess.run(["slackgrab.py", "--skip"])
-    exit(0)
+    cwd = os.getcwd()
+    cwd_list = []
+    for item in (os.listdir(path=cwd)):
+        cwd_list.append(item)
+    if "slackgrab.py" in cwd_list:
+        subprocess.run(["slackgrab.py", "--skip"])
+        exit(0)
+    else:
+        print("")
+        print("Missing slackgrab.py script!")
+        print("Please make sure it is in the same dir as slackstack.py")
+        print("")
+        exit(1)
 else:
     exit(0)
