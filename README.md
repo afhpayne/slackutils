@@ -23,6 +23,7 @@ Uses a local clone of the slackbuilds.org git repository <br />
 Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
 
 ### Release Notes for Slackstack:<br />
+__0.8.7__ Made slackgrab call more robust.  Now slackstack.py will look for slackgrab.py in the launch directory.  Therefore these scripts need not be in an executable PATH.<br />
 __0.8.6__ Added support for Slackgrab --skip argument.<br />
 __0.8.5__ Moved local app search to /var/log/packages for compatibility with 14.2 and current.<br />
 __0.8.4__ Code cleanup, also the SBo dirs list is no longer hardcoded but is now dynamically updated.  Slackstack now asks if the user wants to proceed to Slackgrab to get tarballs.<br />
