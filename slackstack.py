@@ -5,7 +5,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.8.7"
+soft_vers = "0.8.8"
 
 import glob
 import os
@@ -15,6 +15,7 @@ import readline
 import shutil
 import stat
 import subprocess
+import sys
 import time
 
 def hello_string():
@@ -298,11 +299,11 @@ print("\nto", dir_path, "\n")
 
 grab_y_n = input("Run slackgrab.py to get the tarballs (y/n)? ")
 if grab_y_n == "Y" or grab_y_n == "y":
-    cwd = os.getcwd()
-    cwd_list = []
-    for item in (os.listdir(path=cwd)):
-        cwd_list.append(item)
-    if "slackgrab.py" in cwd_list:
+    progpath = sys.path[0]
+    progpath_list = []
+    for item in (os.listdir(path=progpath)):
+        progpath_list.append(item)
+    if "slackgrab.py" in progpath_list:
         subprocess.run(["slackgrab.py", "--skip"])
         exit(0)
     else:
