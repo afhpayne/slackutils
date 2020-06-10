@@ -1,12 +1,5 @@
 #!/bin/env python3
 
-# Software Data:
-soft_name = "Slackstack"
-soft_tag  = "a slackbuild utility"
-
-# Version
-soft_vers = "0.8.8"
-
 import glob
 import os
 import pkg_resources
@@ -18,6 +11,13 @@ import subprocess
 import sys
 import time
 
+# Software Data:
+soft_name = "Slackstack"
+soft_tag  = "a slackbuild utility"
+
+# Version
+soft_vers = "0.8.9"
+
 
 def hello_string():
     os.system("clear")
@@ -27,7 +27,7 @@ def hello_string():
 
 
 hello_string()
-    
+ 
 # This is where we set the path for a personal repo, slackbuilds in here get priority
 dir_personal   = os.path.join(os.environ['HOME'], "slackware", "dbs_slackware", "")
 # This is the path where slackstack assembles the builds
@@ -112,6 +112,7 @@ else:
             except FileExistsError:
                 pass
 
+
 def get_version_of_prog_name():
     infofile = glob.glob(os.path.join(dir_path, prog_name, "*.info"))
     global version_prog_name
@@ -125,6 +126,7 @@ def get_version_of_prog_name():
                 version_prog_name = line.strip()
                 version_prog_name = version_prog_name.split('"')[1]
 
+
 def get_version_of_dep():
     infofile = glob.glob(os.path.join(dir_path, dep, "*.info"))
     global version_dep
@@ -137,7 +139,8 @@ def get_version_of_dep():
             if "VERSION=" in line:
                 version_dep = line.strip()
                 version_dep = version_dep.split('"')[1]
-    
+
+
 def iterate_for_dependecies():
     for dir in os.listdir(os.path.join(dir_path)):
         prog_name = dir
@@ -176,6 +179,7 @@ def iterate_for_dependecies():
                                 except FileExistsError:
                                     pass
 
+
 def iterate_for_permissions():
     for dir in os.scandir(os.path.join(dir_path)):
         prog_name = dir
@@ -183,6 +187,7 @@ def iterate_for_permissions():
         if buildfile:
             buildfile = buildfile[0]
             os.chmod(os.path.join(buildfile), ( stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH ))
+
 
 for w in range(10):
     try:
@@ -223,7 +228,7 @@ for p in os.listdir("/var/log/packages/"):
     else:
         app_vers = app_vers
     package_dict.update([(app_name.lower(),app_vers)])
-    
+
 # Dictionary of python programs and versions
 python_dict  = {}
 for i in pkg_resources.working_set:
@@ -249,7 +254,7 @@ for dep in list3_install_seq:
             get_version_of_dep()
             dep_status = ("--> [INSTALLED] version is " + dep + " " + python_dict.get(dep))
             print(dep + " " + version_dep)
-            print(dep_status)                
+            print(dep_status)
             print("")
             f.write(dep + " " + version_dep + " " + dep_status + "\n")
         elif "python" in dep and dep != "python3":
@@ -259,8 +264,8 @@ for dep in list3_install_seq:
                 if dep_base_check in python_dict:
                     get_version_of_dep()
                     dep_status = ("--> [INSTALLED] version is " + dep + " " + python_dict.get(dep_base_check))
-                    print(dep + " " + version_dep)                
-                    print(dep_status)                
+                    print(dep + " " + version_dep)
+                    print(dep_status)
                     print("")
                     f.write(dep + " " + version_dep + " " + dep_status + "\n")
             if dep_base_check[0] == "python" or dep_base_check[0] == "python3":
@@ -268,8 +273,8 @@ for dep in list3_install_seq:
                 if dep_base_check in python_dict:
                     get_version_of_dep()
                     dep_status = ("--> [INSTALLED] version is " + dep + " " + python_dict.get(dep_base_check))
-                    print(dep + " " + version_dep)                
-                    print(dep_status)                
+                    print(dep + " " + version_dep)
+                    print(dep_status)
                     print("")
                     f.write(dep + " " + version_dep + " " + dep_status + "\n")
                 else:
@@ -282,8 +287,8 @@ for dep in list3_install_seq:
             if dep_soft_check in python_dict:
                 get_version_of_dep()
                 dep_status = ("--> [MAY BE INSTALLED] version is " + dep_soft_check + " " + python_dict.get(dep_soft_check))
-                print(dep + " " + version_dep)                
-                print(dep_status)                
+                print(dep + " " + version_dep)
+                print(dep_status)   
                 print("")
                 f.write(dep + " " + version_dep + " " + dep_status + "\n")
             else:
