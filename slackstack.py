@@ -18,11 +18,14 @@ import subprocess
 import sys
 import time
 
+
 def hello_string():
     os.system("clear")
     welstr = ("Welcome to " + soft_name + " version " + soft_vers + ", " + soft_tag + ".")
     print("\n" + welstr)
     print("")
+
+
 hello_string()
     
 # This is where we set the path for a personal repo, slackbuilds in here get priority
