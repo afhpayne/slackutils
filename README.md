@@ -59,5 +59,5 @@ __0.5.0__ slackgrab is a major revision.  The code is cleaner and handles *.info
 * [DONE] Search a local database for available slackbuilds (e.g., a local git clone of the slackbuilds repo)<br />
 * [REPLACED] Search a remote database for available slackbuilds (e.g., slackbuilds.org)<br />
 
-### Know bugs
+### Known bugs<br />
 To handle incomplete tarball names that happen with Github, slackgrab does a sanity check on the tarball. However if a developer names their tarball something other than their program name -- say, foo-bar is the program name but the tarball is called bar.tar.gz -- slackgrab will misname it. This is very unusual, but I found one example of it so there may be others.
