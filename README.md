@@ -23,7 +23,8 @@ Uses a local clone of the slackbuilds.org git repository <br />
 Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
 
 ### Release Notes for Slackstack:<br />
-__0.8.8__ Bug fix
+__0.8.9__ Bug fix, cleanup<br />
+__0.8.8__ Bug fix<br />
 __0.8.7__ Made slackgrab call more robust.  Now slackstack.py will look for slackgrab.py in the launch directory.  Therefore these scripts need not be in an executable PATH.<br />
 __0.8.6__ Added support for Slackgrab --skip argument.<br />
 __0.8.5__ Moved local app search to /var/log/packages for compatibility with 14.2 and current.<br />
@@ -42,6 +43,7 @@ __0.6.1__ slackstack now searches the local __python library__ to see if the pro
 __0.5.3__ slackstack has one important new feature -- now it searches the computer to see if the program being built or its dependencies are already installed.  In either case, it adds asterisks to the relevant entries in the installseq.txt file and shows [INSTALLED] on the screen output.<br />
 
 ### Release Notes for Slackgrab:<br />
+__0.5.3__ Bug fix, cleanup. Fixed an issued with Github tarballs having an incomplete name.<br />
 __0.5.2__ Added --skip (or -s) flag to skip prompting for download location.<br />
 __0.5.0__ slackgrab is a major revision.  The code is cleaner and handles *.info files in a more efficient manner.<br />
 * Programs with multiple (unlimited) binaries are now supported.  This means things like the Nvidia driver are downloaded and verified correctly<br />
