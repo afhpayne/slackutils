@@ -50,12 +50,14 @@ __0.5.0__ slackgrab is a major revision.  The code is cleaner and handles *.info
 * The code now supports slackbuild *.info files where the tarball htmls are located in either the DOWNLOADS_x86_64 area or the DOWNLOADS area.  There is some variation among slackbuilds, so the program checks the x86 location first and moves to the other one if nothing is found.
 
 ### Near-term goals:<br />
+* combine utilities into one program
+* [PHASE1] Maybe add 32-bit support<br />
 * [DONE] add support for local pip libraries
 * [DONE] add support for multiple binary builds
-* combine utilities into one program
 * [DONE] Add user input to select directories<br />
 * [DONE] Add slackgrab option to traverse multiple slackbuild directories and download tar files for each<br />
-* [PHASE1] Maybe add 32-bit support<br />
 * [DONE] Search a local database for available slackbuilds (e.g., a local git clone of the slackbuilds repo)<br />
-* Search a remote database for available slackbuilds (e.g., slackbuilds.org)<br />
+* [REPLACED] Search a remote database for available slackbuilds (e.g., slackbuilds.org)<br />
 
+### Know bugs
+To handle incomplete tarball names that happen with Github, slackgrab does a sanity check on the tarball. However if a developer names their tarball something other than their program name -- say, foo-bar is the program name but the tarball is called bar.tar.gz -- slackgrab will misname it. This is very unusual, but I found one example of it so there may be others.
