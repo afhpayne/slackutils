@@ -223,7 +223,7 @@ for p in os.listdir("/var/log/packages/"):
     else:
         app_vers = app_vers
     package_dict.update([(app_name.lower(),app_vers)])
-    
+
 # Dictionary of python programs and versions
 python_dict  = {}
 for i in pkg_resources.working_set:
