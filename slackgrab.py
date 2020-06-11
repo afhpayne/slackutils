@@ -1,12 +1,5 @@
 #!/bin/env python3
 
-# Software Data:
-soft_name = "Slackgrab"
-soft_tag  = "a slackbuild tarball and binary downloader"
-
-# Version
-soft_vers = "0.5.2"
-
 import glob
 import hashlib
 import os
@@ -15,6 +8,13 @@ import readline
 import shutil
 import sys
 import urllib.request
+
+# Software Data:
+soft_name = "Slackgrab"
+soft_tag  = "a slackbuild tarball and binary downloader"
+
+# Version
+soft_vers = "0.5.4"
 
 # Arguments
 # --skip means don't ask about the download directory
@@ -35,6 +35,7 @@ build_prog  = glob.glob(build_home + "*-tree")
 build_path  = os.path.join(str(build_prog))
 build_path  = build_path.strip("[").strip("]").strip("'")
 
+
 def tar_grab_func():
     infofile = glob.glob(os.path.join(currentwd, "*.info"))
     if infofile:
@@ -51,7 +52,11 @@ def tar_grab_func():
         md5_list    = []
         a = 0
         b = 0
-        
+
+        prgnam = infofile.split()
+        prgnam = prgnam[0].replace('PRGNAM="', "").strip('"')
+        prgstem = prgnam[0:2].lower()
+
         back_half_url = infofile.split("DOWNLOAD_x86_64=")
         for item in back_half_url[1].split():
             if "http" in item:
@@ -71,18 +76,32 @@ def tar_grab_func():
                 print("Downloading " + url)
                 with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarname:
                     shutil.copyfileobj(response, tarname)
+                    tarball_name_fix = prgnam + "-" + tarname_text
+                    if tarball.name == tarball_name_fix:
+                        pass
+                    else:
+                        os.rename((os.path.join(str(os.getcwd()) + "/" + str(tarname))), \
+                                  (os.path.join(str(os.getcwd()) + "/" + tarball_name_fix)))
                     
                 hasher = hashlib.md5()
-                with open(tarname_text, "rb") as tarball:
+                with open(tarball_name_fix, "rb") as tarball:
                     binary = tarball.read()
                     hasher.update(binary)
-                print("\n" + tarname_text + "\n")
+                print("\n" + tarball_name_fix + "\n")
                 print("slackbuild md5sum  =", md5_list[c])
                 print("actual file md5sum =", hasher.hexdigest())
                 if md5_list[c] != hasher.hexdigest():
                     print("\n* * * CHECKSUMS DO NOT MATCH! * * *\n")
                 else:
                     print("Checksum match :) \n")
+
+                # Github has a naming problem, this fixes it
+                if prgstem in tarball.name.strip().lower():
+                    pass
+                else:
+                    tarball_name_fix = prgnam + "-" + tarball.name
+                    os.rename((os.path.join(str(os.getcwd()) + "/" + str(tarname))), \
+                              (os.path.join(str(os.getcwd()) + "/" + tarball_name_fix)))
                 c += 1
         else:
             front_half_url = infofile.split("DOWNLOAD=")
@@ -95,32 +114,42 @@ def tar_grab_func():
                 if len(item) > 5 and b < a:
                     md5_list.append(item.strip('"'))
                     b += 1
-            c = 0
-            for url in url_list:
-                tarname = url.split('/')
-                tarname = tarname[-1]
-                tarname_text = tarname
-                print("Downloading " + url)
-                with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarname:
-                    shutil.copyfileobj(response, tarname)
-                    
-                hasher = hashlib.md5()
-                with open(tarname_text, "rb") as tarball:
-                    binary = tarball.read()
-                    hasher.update(binary)
-                print("\n" + tarname_text + "\n")
-                print("slackbuild md5sum  =", md5_list[c])
-                print("actual file md5sum =", hasher.hexdigest())
-                if md5_list[c] != hasher.hexdigest():
-                    print("\n* * * CHECKSUMS DO NOT MATCH! * * *\n")
-                else:
-                    print("Checksum match :) \n")
-                c += 1
+            if a != 0:
+                c = 0
+                for url in url_list:
+                    tarname = url.split('/')
+                    tarname = tarname[-1]
+                    tarname_text = str(tarname)
+                    print("Downloading " + url)
+                    with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarball:
+                        shutil.copyfileobj(response, tarball)
+
+                    hasher = hashlib.md5()
+                    with open(tarball.name, "rb") as tarball:
+                        binary = tarball.read()
+                        hasher.update(binary)
+                    print("\n" + "(" + prgnam + ") " + tarball.name + "\n")
+                    print("slackbuild md5sum  =", md5_list[c])
+                    print("actual file md5sum =", hasher.hexdigest())
+                    if md5_list[c] != hasher.hexdigest():
+                        print("\n* * * CHECKSUMS DO NOT MATCH! * * *\n")
+                    else:
+                        print("Checksum match :) \n")
+
+                    # # Github has a naming problem, this fixes it
+                    if prgstem in tarball.name.strip().lower():
+                        pass
+                    else:
+                        tarball_name_fix = prgnam + "-" + tarball.name
+                        os.rename((os.path.join(str(os.getcwd()) + "/" + str(tarname))), \
+                                  (os.path.join(str(os.getcwd()) + "/" + tarball_name_fix)))
+                    c += 1
+
 
 if arg_1 == "--skip" or arg_1 == "-s":
     for dir in os.scandir(os.path.join(build_path)):
         currentwd = dir
-        print(currentwd)
+        # print(currentwd)
         tar_grab_func()
 else:
     print("\nIterate all folders in [", build_path, "] ?")
@@ -128,7 +157,7 @@ else:
     if yes_or_no == "Y" or yes_or_no == "y":
         for dir in os.scandir(os.path.join(build_path)):
             currentwd = dir
-            print(currentwd)
+            # print(currentwd)
             tar_grab_func()
     else: 
         print("\nOk, use current: [", os.getcwd(), "] ?")
