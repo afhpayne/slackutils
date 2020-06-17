@@ -14,7 +14,7 @@ soft_name = "Slackgrab"
 soft_tag  = "a slackbuild tarball and binary downloader"
 
 # Version
-soft_vers = "0.5.5"
+soft_vers = "0.5.6"
 
 # Arguments
 # --skip means don't ask about the download directory
@@ -76,18 +76,12 @@ def tar_grab_func():
                 print("Downloading " + url)
                 with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarball:
                     shutil.copyfileobj(response, tarball)
-                    tarball_name_fix = prgnam + "-" + tarname_text
-                    if tarball.name == tarball_name_fix:
-                        pass
-                    else:
-                        os.rename((os.path.join(str(os.getcwd()) + "/" + str(tarname))), \
-                                  (os.path.join(str(os.getcwd()) + "/" + tarball_name_fix)))
                     
                 hasher = hashlib.md5()
-                with open(tarball_name_fix, "rb") as tarball:
+                with open(tarball.name, "rb") as tarball:
                     binary = tarball.read()
                     hasher.update(binary)
-                print("\n" + tarball_name_fix + "\n")
+                print("\n" + "(" + prgnam + ") " + tarball.name + "\n")
                 print("slackbuild md5sum  =", md5_list[c])
                 print("actual file md5sum =", hasher.hexdigest())
                 if md5_list[c] != hasher.hexdigest():
