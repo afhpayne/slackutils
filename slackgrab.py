@@ -14,7 +14,7 @@ soft_name = "Slackgrab"
 soft_tag  = "a slackbuild tarball and binary downloader"
 
 # Version
-soft_vers = "0.5.4"
+soft_vers = "0.5.5"
 
 # Arguments
 # --skip means don't ask about the download directory
@@ -74,8 +74,8 @@ def tar_grab_func():
                 tarname = tarname[-1]
                 tarname_text = tarname
                 print("Downloading " + url)
-                with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarname:
-                    shutil.copyfileobj(response, tarname)
+                with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarball:
+                    shutil.copyfileobj(response, tarball)
                     tarball_name_fix = prgnam + "-" + tarname_text
                     if tarball.name == tarball_name_fix:
                         pass
