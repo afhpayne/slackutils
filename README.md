@@ -43,6 +43,7 @@ __0.6.1__ slackstack now searches the local __python library__ to see if the pro
 __0.5.3__ slackstack has one important new feature -- now it searches the computer to see if the program being built or its dependencies are already installed.  In either case, it adds asterisks to the relevant entries in the installseq.txt file and shows [INSTALLED] on the screen output.<br />
 
 ### Release Notes for Slackgrab:<br />
+__0.5.5__ Bug fix<br />
 __0.5.3__ Bug fix, cleanup. Fixed an issued with Github tarballs having an incomplete name.<br />
 __0.5.2__ Added --skip (or -s) flag to skip prompting for download location.<br />
 __0.5.0__ slackgrab is a major revision.  The code is cleaner and handles *.info files in a more efficient manner.<br />
