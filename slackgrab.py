@@ -14,7 +14,7 @@ soft_name = "Slackgrab"
 soft_tag  = "a slackbuild tarball and binary downloader"
 
 # Version
-soft_vers = "0.5.6"
+soft_vers = "0.5.7"
 
 # Arguments
 # --skip means don't ask about the download directory
@@ -35,8 +35,15 @@ build_prog  = glob.glob(build_home + "*-tree")
 build_path  = os.path.join(str(build_prog))
 build_path  = build_path.strip("[").strip("]").strip("'")
 
+infolist = []
+download_list = []
+md5_list = []
+download_64_list = []
+md5_64_list = []
+download_64_dict = {}
 
-def tar_grab_func():
+
+def read_info_func():
     infofile = glob.glob(os.path.join(currentwd, "*.info"))
     if infofile:
         infofile = infofile[0]
@@ -45,106 +52,164 @@ def tar_grab_func():
         with open(infofile) as i:
             infofile = i.read()
         i.closed
+
+        for row in infofile.split("\n"):
+            row=row.strip()
+            infolist.append(row)
+
+
+    def parse_info_func(infofile, first, last):
+        start = infofile.index(first) + len(first)
+        end = infofile.index(last, start)
+        return infofile[start:end]
+
+    download = (parse_info_func(infofile, "DOWNLOAD=", "MD5SUM="))
+    if download:
+        download = download.replace('"', '').replace("\\", "")
+    for item in download.split():
+        if "UNSUPPORTED" not in item:
+            download_list.append(item)
+
+    md5 = (parse_info_func(infofile, "MD5SUM=", "DOWNLOAD_x86_64="))
+    if md5:
+        md5 = md5.replace('"', '').replace("\\", "")
+    for item in md5.split():
+        md5_list.append(item)
+
+    download_64 = (parse_info_func(infofile, "DOWNLOAD_x86_64=", "MD5SUM_x86_64="))
+    if download_64:
+        download_64 = download_64.replace('"', '').replace("\\", "")
+    for item in download_64.split():
+        download_64_list.append(item)
+
+    md5_64 = (parse_info_func(infofile, "MD5SUM_x86_64=", "REQUIRES="))
+    if md5_64:
+        md5_64 = md5_64.replace('"', '').replace("\\", "")
+    for item in md5_64.split():
+        md5_64_list.append(item)
+
+read_info_func()
+
+if download_64_listl
+
+            
+
         
-        line_list   = []
-        check_64bit = []
-        url_list    = []
-        md5_list    = []
-        a = 0
-        b = 0
 
-        prgnam = infofile.split()
-        prgnam = prgnam[0].replace('PRGNAM="', "").strip('"')
-        prgstem = prgnam[0:2].lower()
+# def get_url_func():
+#     for item in infolist:
+#         if "DOWNLOAD" in item:
+#             item = item.split("=")
+#             url_blob = item[1].strip('"')
+#             url_split = url_blob.split("\n") 
 
-        back_half_url = infofile.split("DOWNLOAD_x86_64=")
-        for item in back_half_url[1].split():
-            if "http" in item:
-                url_list.append(item.strip('"'))
-                a += 1
-        back_half_md5 = infofile.split("MD5SUM_x86_64=")
-        for item in back_half_md5[1].split():
-            if len(item) > 5 and b < a:
-                md5_list.append(item.strip('"'))
-                b += 1
-        if a != 0:
-            c = 0
-            for url in url_list:
-                tarname = url.split('/')
-                tarname = tarname[-1]
-                tarname_text = tarname
-                print("Downloading " + url)
-                with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarball:
-                    shutil.copyfileobj(response, tarball)
+
+# def get_url_64_func():
+#     for item in infolist:
+#         if 'DOWNLOAD_x86_64="h' in item:
+#             # item = item.strip("DOWNLOAD_x86_64=")
+#             # url64_blob = item[1].strip('"')
+#             # url64_split = url_blob.split("\n") 
+#             print(item)
+#     exit()
+
+        
+        # prgnam = infofile.split()
+        # prgnam = prgnam[0].replace('PRGNAM="', "").strip('"')
+        # prgstem = prgnam[0:2].lower()
+
+        # back_half_url = infofile.split("DOWNLOAD_x86_64=")
+        # for item in back_half_url[1].split():
+        #     if "http" in item:
+        #         url_list.append(item.strip('"'))
+        #         a += 1
+        # back_half_md5 = infofile.split("MD5SUM_x86_64=")
+        # for item in back_half_md5[1].split():
+        #     if len(item) > 5 and b < a:
+        #         md5_list.append(item.strip('"'))
+        #         b += 1
+        # if a != 0:
+        #     c = 0
+        #     for url in url_list:
+        #         tarname = url.split('/')
+        #         tarname = tarname[-1]
+        #         tarname_text = tarname
+        #         print("Downloading " + url)
+        #         with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarball:
+        #             shutil.copyfileobj(response, tarball)
                     
-                hasher = hashlib.md5()
-                with open(tarball.name, "rb") as tarball:
-                    binary = tarball.read()
-                    hasher.update(binary)
-                print("\n" + "(" + prgnam + ") " + tarball.name + "\n")
-                print("slackbuild md5sum  =", md5_list[c])
-                print("actual file md5sum =", hasher.hexdigest())
-                if md5_list[c] != hasher.hexdigest():
-                    print("\n* * * CHECKSUMS DO NOT MATCH! * * *\n")
-                else:
-                    print("Checksum match :) \n")
+        #         hasher = hashlib.md5()
+        #         with open(tarball.name, "rb") as tarball:
+        #             binary = tarball.read()
+        #             hasher.update(binary)
+        #         print("\n" + "(" + prgnam + ") " + tarball.name + "\n")
+        #         print("slackbuild md5sum  =", md5_list[c])
+        #         print("actual file md5sum =", hasher.hexdigest())
+        #         if md5_list[c] != hasher.hexdigest():
+        #             print("\n* * * CHECKSUMS DO NOT MATCH! * * *\n")
+        #         else:
+        #             print("Checksum match :) \n")
 
-                # Github has a naming problem, this fixes it
-                if prgstem in tarball.name.strip().lower():
-                    pass
-                else:
-                    tarball_name_fix = prgnam + "-" + tarball.name
-                    os.rename((os.path.join(str(os.getcwd()) + "/" + str(tarname))), \
-                              (os.path.join(str(os.getcwd()) + "/" + tarball_name_fix)))
-                c += 1
-        else:
-            front_half_url = infofile.split("DOWNLOAD=")
-            for item in front_half_url[1].split():
-                if "http" in item:
-                    url_list.append(item.strip('"'))
-                    a += 1
-            front_half_md5 = infofile.split("MD5SUM=")
-            for item in front_half_md5[1].split():
-                if len(item) > 5 and b < a:
-                    md5_list.append(item.strip('"'))
-                    b += 1
-            if a != 0:
-                c = 0
-                for url in url_list:
-                    tarname = url.split('/')
-                    tarname = tarname[-1]
-                    tarname_text = str(tarname)
-                    print("Downloading " + url)
-                    with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarball:
-                        shutil.copyfileobj(response, tarball)
+        #         # Github has a naming problem, this fixes it
+        #         if prgstem in tarball.name.strip().lower():
+        #             pass
+        #         else:
+        #             tarball_name_fix = prgnam + "-" + tarball.name
+        #             os.rename((os.path.join(str(os.getcwd()) + "/" + str(tarname))), \
+        #                       (os.path.join(str(os.getcwd()) + "/" + tarball_name_fix)))
+        #         c += 1
+        # else:
+        #     front_half_url = infofile.split("DOWNLOAD=")
+        #     for item in front_half_url[1].split():
+        #         if "http" in item:
+        #             url_list.append(item.strip('"'))
+        #             a += 1
+        #     front_half_md5 = infofile.split("MD5SUM=")
+        #     for item in front_half_md5[1].split():
+        #         if len(item) > 5 and b < a:
+        #             md5_list.append(item.strip('"'))
+        #             b += 1
+        #     if a != 0:
+        #         c = 0
+        #         for url in url_list:
+        #             tarname = url.split('/')
+        #             tarname = tarname[-1]
+        #             tarname_text = str(tarname)
+        #             print("Downloading " + url)
+        #             with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarball:
+        #                 shutil.copyfileobj(response, tarball)
 
-                    hasher = hashlib.md5()
-                    with open(tarball.name, "rb") as tarball:
-                        binary = tarball.read()
-                        hasher.update(binary)
-                    print("\n" + "(" + prgnam + ") " + tarball.name + "\n")
-                    print("slackbuild md5sum  =", md5_list[c])
-                    print("actual file md5sum =", hasher.hexdigest())
-                    if md5_list[c] != hasher.hexdigest():
-                        print("\n* * * CHECKSUMS DO NOT MATCH! * * *\n")
-                    else:
-                        print("Checksum match :) \n")
+        #             hasher = hashlib.md5()
+        #             with open(tarball.name, "rb") as tarball:
+        #                 binary = tarball.read()
+        #                 hasher.update(binary)
+        #             print("\n" + "(" + prgnam + ") " + tarball.name + "\n")
+        #             print("slackbuild md5sum  =", md5_list[c])
+        #             print("actual file md5sum =", hasher.hexdigest())
+        #             if md5_list[c] != hasher.hexdigest():
+        #                 print("\n* * * CHECKSUMS DO NOT MATCH! * * *\n")
+        #             else:
+        #                 print("Checksum match :) \n")
 
-                    # # Github has a naming problem, this fixes it
-                    if prgstem in tarball.name.strip().lower():
-                        pass
-                    else:
-                        tarball_name_fix = prgnam + "-" + tarball.name
-                        os.rename((os.path.join(str(os.getcwd()) + "/" + str(tarname))), \
-                                  (os.path.join(str(os.getcwd()) + "/" + tarball_name_fix)))
-                    c += 1
+        #             # # Github has a naming problem, this fixes it
+        #             if prgstem in tarball.name.strip().lower():
+        #                 pass
+        #             else:
+        #                 tarball_name_fix = prgnam + "-" + tarball.name
+        #                 os.rename((os.path.join(str(os.getcwd()) + "/" + str(tarname))), \
+        #                           (os.path.join(str(os.getcwd()) + "/" + tarball_name_fix)))
+        #             c += 1
 
 
 if arg_1 == "--skip" or arg_1 == "-s":
     for dir in os.scandir(os.path.join(build_path)):
         currentwd = dir
         # print(currentwd)
-        tar_grab_func()
+        # read_info_func()
+
+        
+        
+        
 else:
     print("\nIterate all folders in [", build_path, "] ?")
     yes_or_no = input("y/n: ")
