@@ -14,7 +14,7 @@ soft_name = "Slackgrab"
 soft_tag  = "a slackbuild tarball and binary downloader"
 
 # Version
-soft_vers = "0.5.7"
+soft_vers = "0.5.8"
 
 build_home = os.path.join(os.environ['HOME'], "slackstack", "")
 build_path = glob.glob(build_home + "*-tree")
@@ -80,10 +80,11 @@ def slackgrab_func():
 
     def get_tar_func():
         for url in url_list:
+            req = urllib.request.Request(url, headers={"User-Agent": "Chrome"})
             tarname = url.split('/')
             tarname = tarname[-1]
             print("Downloading " + url)
-            with urllib.request.urlopen(url) as response, open(tarname, 'wb') as tarname:
+            with urllib.request.urlopen(req) as response, open(tarname, 'wb') as tarname:
                 shutil.copyfileobj(response, tarname)
 
 
