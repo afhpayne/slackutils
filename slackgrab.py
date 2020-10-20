@@ -1,5 +1,29 @@
 #!/bin/env python3
 
+# MIT License
+
+# Copyright (c) 2019-2020 Andrew Payne
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# 79 spaces-------------------------------------------------------------------|
+
 import glob
 import hashlib
 import os
@@ -14,7 +38,7 @@ soft_name = "Slackgrab"
 soft_tag  = "a slackbuild tarball and binary downloader"
 
 # Version
-soft_vers = "0.5.8"
+soft_vers = "0.5.9"
 
 build_home = os.path.join(os.environ['HOME'], "slackstack", "")
 build_path = glob.glob(build_home + "*-tree")
@@ -57,13 +81,15 @@ def slackgrab_func():
     for item in md5.split():
         md5_list.append(item)      
 
-    download_64 = (parse_info_func(infofile, "DOWNLOAD_x86_64=", "MD5SUM_x86_64="))
+    download_64 = (parse_info_func(
+        infofile, "DOWNLOAD_x86_64=", "MD5SUM_x86_64="))
     if download_64:
         download_64 = download_64.replace('"', '').replace("\\", "")
     for item in download_64.split():
         download_64_list.append(item)
 
-    md5_64 = (parse_info_func(infofile, "MD5SUM_x86_64=", "REQUIRES="))
+    md5_64 = (parse_info_func(
+        infofile, "MD5SUM_x86_64=", "REQUIRES="))
     if md5_64:
         md5_64 = md5_64.replace('"', '').replace("\\", "")
     for item in md5_64.split():
@@ -80,11 +106,13 @@ def slackgrab_func():
 
     def get_tar_func():
         for url in url_list:
-            req = urllib.request.Request(url, headers={"User-Agent": "Chrome"})
+            req = urllib.request.Request(
+                url, headers={"User-Agent": "Chrome"})
             tarname = url.split('/')
             tarname = tarname[-1]
             print("Downloading " + url)
-            with urllib.request.urlopen(req) as response, open(tarname, 'wb') as tarname:
+            with urllib.request.urlopen(req) as response,
+            open(tarname, 'wb') as tarname:
                 shutil.copyfileobj(response, tarname)
 
 
@@ -122,7 +150,8 @@ except(IndexError):
     pass
 
 os.system("clear")
-welstr = ("Welcome to " + soft_name + " version " + soft_vers + ", " + soft_tag + ".")
+welstr = ("Welcome to " + soft_name + " version "
+          + soft_vers + ", " + soft_tag + ".")
 print("\n" + welstr)
 
 if arg_1 == "--skip" or arg_1 == "-s":
