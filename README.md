@@ -23,6 +23,7 @@ Uses a local clone of the slackbuilds.org git repository <br />
 Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
 
 ### Release Notes for Slackstack:<br />
+__0.9.0__ added repo priority list<br />
 __0.8.9__ Bug fix, cleanup<br />
 __0.8.8__ Bug fix<br />
 __0.8.7__ Made slackgrab call more robust.  Now slackstack.py will look for slackgrab.py in the launch directory.  Therefore these scripts need not be in an executable PATH.<br />
