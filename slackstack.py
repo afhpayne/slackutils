@@ -16,7 +16,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.8.9"
+soft_vers = "0.9.0"
 
 
 def hello_string():
@@ -28,8 +28,11 @@ def hello_string():
 
 hello_string()
  
-# This is where we set the path for a personal repo, slackbuilds in here get priority
-dir_personal   = os.path.join(os.environ['HOME'], "slackware", "dbs_slackware", "")
+# This is where we set the path for personal repos, slackbuilds here get priority
+# First priority
+dir_dev   = os.path.join(os.environ['HOME'], "slackware", "dev_slack", "")
+# Second priority
+dir_dbs   = os.path.join(os.environ['HOME'], "slackware", "dbs_slackware", "")
 # This is the path where slackstack assembles the builds
 dir_stack      = os.path.join(os.environ['HOME'], "slackstack", "")
 # This is where the local slackbuilds git repo is stored
@@ -97,7 +100,13 @@ list1_checked_for_deps = []
 list2_is_a_dep = []
 list3_install_seq = []
 
-path_to_prog = os.path.join(dir_personal + prog_name)
+path_to_prog = os.path.join(dir_dbs + prog_name)
+if os.path.isdir(path_to_prog):
+    try:
+        shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
+    except FileExistsError:
+        pass
+path_to_prog = os.path.join(dir_dev + prog_name)
 if os.path.isdir(path_to_prog):
     try:
         shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
@@ -164,7 +173,13 @@ def iterate_for_dependecies():
 
                 for item in list2_is_a_dep:
                     prog_name = item
-                    path_to_prog = os.path.join(dir_personal + prog_name)
+                    path_to_prog = os.path.join(dir_dbs + prog_name)
+                    if os.path.isdir(path_to_prog):
+                        try:
+                            shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
+                        except FileExistsError:
+                            pass
+                    path_to_prog = os.path.join(dir_dev + prog_name)
                     if os.path.isdir(path_to_prog):
                         try:
                             shutil.copytree(os.path.join(path_to_prog), os.path.join(dir_path, prog_name))
