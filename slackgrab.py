@@ -38,7 +38,7 @@ soft_name = "Slackgrab"
 soft_tag  = "a slackbuild tarball and binary downloader"
 
 # Version
-soft_vers = "0.5.9"
+soft_vers = "0.6.0"
 
 build_home = os.path.join(os.environ['HOME'], "slackstack", "")
 build_path = glob.glob(build_home + "*-tree")
@@ -49,6 +49,14 @@ download_list = []
 md5_list = []
 download_64_list = []
 md5_64_list = []
+
+
+def hello_string():
+    os.system("clear")
+    hellostr = ("Welcome to " + soft_name + " version "
+              + soft_vers + ", " + soft_tag + ".")
+    print("\n" + hellostr)
+    print("")
 
 
 def slackgrab_func():
@@ -111,8 +119,8 @@ def slackgrab_func():
             tarname = url.split('/')
             tarname = tarname[-1]
             print("Downloading " + url)
-            with urllib.request.urlopen(req) as response,
-            open(tarname, 'wb') as tarname:
+            with urllib.request.urlopen(req) as response, open(
+                    tarname, 'wb') as tarname:
                 shutil.copyfileobj(response, tarname)
 
 
@@ -140,6 +148,8 @@ def slackgrab_func():
 
 
 # Let's get started
+hello_string()
+
 # Arguments
 # --skip means don't ask about the download directory
 try:
@@ -148,11 +158,6 @@ try:
 except(IndexError):
     arg_1 = "0"
     pass
-
-os.system("clear")
-welstr = ("Welcome to " + soft_name + " version "
-          + soft_vers + ", " + soft_tag + ".")
-print("\n" + welstr)
 
 if arg_1 == "--skip" or arg_1 == "-s":
     for path in next(os.walk(build_path))[1]:
