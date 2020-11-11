@@ -40,7 +40,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.9.1"
+soft_vers = "0.9.2"
 
 # This is where we set the path for personal repos, paths here get priority
 # First priority
@@ -269,6 +269,10 @@ def show_dependency_list_func():
 
 
 def make_dict_of_packages_func():
+    app_data_search = re.compile("-[^a-z]+[\S]*[a-z]*")
+    app_ver_search = re.compile('-[x|n].*')
+    app_tag_search = re.compile("_\w+$")
+
     for item in os.listdir("/var/log/packages/"):
         app_data_match = app_data_search.search(item)
         app_name = item.replace(app_data_match.group(0), "")
@@ -313,7 +317,7 @@ def get_version_of_dep():
 # Let's get started
 hello_string()
 make_slackstack_dir_func()
-# clone_repo_func()
+clone_repo_func()
 check_for_old_build_func()
 
 sbo_dirs = []
@@ -336,34 +340,16 @@ iterate_for_permissions()
 list3_install_seq = []
 show_dependency_list_func()
 
-
-# prog_build_path[0] = os.path.join(os.environ['HOME'], "slackstack", prog_build_dir, "")
-    # print("\nBuild directory =", prog_build_path[0])
-
-# for w in range(100):
-#     try:
-#         iterate_for_dependecies()
-#     except FileNotFoundError:
-#         print("\nPlease check spelling and CAPS, --> "
-#               + prog_name + " <-- was not found in "
-#               + dir_git + ". \n")
-#         exit(1)
-
-
-app_data_search = re.compile("-[^a-z]+[\S]*[a-z]*")
-app_ver_search = re.compile('-[x|n].*')
-app_tag_search = re.compile("_\w+$")
-
 package_dict = {}
 make_dict_of_packages_func()
 
 python_dict  = {}
 make_dict_of_python_packages_func()
 
-
 # Start the search
 f = open(os.path.join(os.environ['HOME'], prog_build_path[0], "installseq.txt"), "a")
 f.write("Install order:\n")
+
 version_dep = ""
 version_dep_list = []
 for dep in list3_install_seq:
@@ -449,3 +435,6 @@ if grab_y_n == "Y" or grab_y_n == "y":
         exit(1)
 else:
     exit(0)
+
+# prog_build_path[0] = os.path.join(os.environ['HOME'], "slackstack", prog_build_dir, "")
+    # print("\nBuild directory =", prog_build_path[0])
