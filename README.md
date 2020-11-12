@@ -3,6 +3,7 @@
 The goal of Slackutils is to make working with slackbuilds easier.
 
 #### There are two utilities -- slackstack and slackgrab
+If both programs are executable and in the same directory, slackstack.py will automatically call slackgrab.py when it's time to download tarballs.<br />
 
 #### Slackstack:<br />
 Uses a local clone of the slackbuilds.org git repository <br />
@@ -58,8 +59,7 @@ __0.5.0__ slackgrab is a major revision.  The code is cleaner and handles *.info
 * The code now supports slackbuild *.info files where the tarball htmls are located in either the DOWNLOADS_x86_64 area or the DOWNLOADS area.  There is some variation among slackbuilds, so the program checks the x86 location first and moves to the other one if nothing is found.
 
 ### Near-term goals:<br />
-* combine utilities into one program
-* [PHASE2] 32-bit support in progress<br />
+* [PHASE2] combine utilities into one program
 * [DONE] add support for local pip libraries
 * [DONE] add support for multiple binary builds
 * [DONE] Add user input to select directories<br />
@@ -69,3 +69,5 @@ __0.5.0__ slackgrab is a major revision.  The code is cleaner and handles *.info
 
 ### Known bugs<br />
 To handle incomplete tarball names that happen with Github, slackgrab does a sanity check on the tarball. However if a developer names their tarball something other than their program name -- say, foo-bar is the program name but the tarball is called bar.tar.gz -- slackgrab will misname it. This is very unusual, but I found one example of it so there may be others.
+
+32-bit slackbuild support is fairly trivial to add for someone who needs it, but I personally have no plans to include it right now<br />
