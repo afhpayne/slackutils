@@ -23,6 +23,7 @@ Uses a local clone of the slackbuilds.org git repository <br />
 Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
 
 ### Release Notes for Slackstack:<br />
+__0.9.3__ clean up code<br />
 __0.9.2__ refactor and fix bugs<br />
 __0.9.1__ refactor and fix scope bug<br />
 __0.9.0__ added repo priority list<br />
