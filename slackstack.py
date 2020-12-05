@@ -40,7 +40,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.9.4"
+soft_vers = "0.9.5"
 
 # This is where we set the path for personal repos, paths here get priority
 # First priority
@@ -209,6 +209,7 @@ def iterate_for_dependencies():
                         for dep in depends.split(" "):
                             list2_is_a_dep.append(dep)
 
+                            
 
 def copy_dependencies_func():    
     for item in list2_is_a_dep:
@@ -262,6 +263,27 @@ def iterate_for_permissions():
                      )
 
 
+def make_dict_of_candidate_versions_func():
+    path_to_build = os.path.join(prog_build_path[0] + "/")
+    for directory in os.listdir(path_to_build):
+        prog_name = directory
+
+        if prog_name != "":
+            infofile = glob.glob(
+                os.path.join(path_to_build, prog_name, "*.info"))
+            if infofile:
+                infofile = infofile[0]
+                with open(infofile) as i:
+                    infofile = i.read()
+
+                for line in infofile.split("\n"):
+                    if "VERSION=" in line:
+                        version = line.strip()
+                        version = version.split('"')[1]
+                        for ver in version.split(" "):
+                            candidate_dict.update({prog_name : ver})
+
+
 def show_dependency_list_func():
     print("\nAdding dependencies for: " + prog_name + "\n")
     for dep in list2_is_a_dep[::-1]:
@@ -303,19 +325,23 @@ def make_dict_of_python_packages_func():
             python_dict.update([(item[0].lower(),item[1])])
 
 
-def get_version_of_dep():
-    for dep in list3_install_seq:
-        infofile = glob.glob(os.path.join(prog_build_path[0], dep, "*.info"))
-        if infofile:
-            infofile = infofile[0]
-            with open(infofile) as gvoc:
-                infofile = gvoc.read()
-            for line in infofile.split("\n"):
-                if "VERSION=" in line:
-                    version_dep = line.strip()
-                    version_dep = version_dep.split('"')[1]
-                    version_dep_list.clear()
-                    version_dep_list.append(version_dep)
+# def get_version_of_dep():
+    # for prog_name, version in candidate_dict.items():
+    #     print(prog_name, version)
+    # for dep in list3_install_seq:
+    #     infofile = glob.glob(os.path.join(prog_build_path[0], dep, "*.info"))
+    #     if infofile:
+    #         infofile = infofile[0]
+    #         with open(infofile) as gvoc:
+    #             infofile = gvoc.read()
+    #         for line in infofile.split("\n"):
+    #             if "VERSION=" in line:
+    #                 version_dep = line.strip()
+    #                 version_dep = version_dep.split('"')[1]
+    #                 # print(version_dep)
+    #                 version_dep_list.clear()
+    #                 version_dep_list.append(version_dep)
+    #                 # print(version_dep_list)
 
 
 def create_install_list_func():
@@ -328,51 +354,63 @@ def create_install_list_func():
 def dep_is_installed_func():
     for dep in list3_install_seq:
         if dep not in list4_deps_done:
+            for name, version in candidate_dict.items():
+                if name == dep:
+                    sbo_version = version
+
             if package_dict.get(dep) is not None:
                 dep_vers = package_dict.get(dep)
-                get_version_of_dep()
+                # get_version_of_dep()
                 dep_status = ("--> [INSTALLED] version is "
                               + dep
                               + " "
                               + package_dict.get(dep)
                               )
-                print(dep + " " + version_dep_list[0])
+                print(dep + " " + sbo_version)
                 print(dep_status)
                 print("")
                 list4_deps_done.append(dep)
                 with open(os.path.join(
                         os.environ['HOME'], prog_build_path[0],
                         "installseq.txt"), "a") as f:
-                    f.write(dep + " " + version_dep_list[0] + " "
+                    f.write(dep + " " + sbo_version + " "
                             + dep_status + "\n")
 
 
 def dep_is_python_var1_func():
     for dep in list3_install_seq:
         if dep not in list4_deps_done:
+            for name, version in candidate_dict.items():
+                if name == dep:
+                    sbo_version = version
+
             if python_dict.get(dep) is not None and \
                package_dict.get(dep) is None:
                 dep_vers = python_dict.get(dep)
-                get_version_of_dep()
+                # get_version_of_dep()
                 dep_status = ("--> [INSTALLED] version is "
                               + dep
                               + " "
                               + python_dict.get(dep)
                               )
-                print(dep + " " + version_dep_list[0])
+                print(dep + " " + sbo_version)
                 print(dep_status)
                 print("")
                 list4_deps_done.append(dep)
                 with open(os.path.join(
                         os.environ['HOME'], prog_build_path[0],
                         "installseq.txt"), "a") as f:
-                    f.write(dep + " " + version_dep_list[0] + " "
+                    f.write(dep + " " + sbo_version + " "
                             + dep_status + "\n")
 
 
 def dep_is_python_var2_func():
     for dep in list3_install_seq:
         if dep not in list4_deps_done:
+            for name, version in candidate_dict.items():
+                if name == dep:
+                    sbo_version = version
+
             if "python" in dep and dep != "python3":
                 try:
                     dep_base_check = dep.split("-")
@@ -382,20 +420,20 @@ def dep_is_python_var2_func():
                             dep_base_check[0].rstrip("0123456789")
                         )
                         if dep_base_check in python_dict:
-                            get_version_of_dep()
+                            # get_version_of_dep()
                             dep_status = ("--> [INSTALLED] version is "
                                           + dep
                                           + " "
                                           + python_dict.get(dep_base_check)
                                           )
-                            print(dep + " " + version_dep_list[0])
+                            print(dep + " " + sbo_version)
                             print(dep_status)
                             print("")
                             list4_deps_done.append(dep)
                             with open(os.path.join(
                                     os.environ['HOME'], prog_build_path[0],
                                     "installseq.txt"), "a") as f:
-                                f.write(dep + " " + version_dep_list[0] + " "
+                                f.write(dep + " " + sbo_version + " "
                                         + dep_status + "\n")
                 except(IndexError):
                     continue
@@ -404,6 +442,10 @@ def dep_is_python_var2_func():
 def dep_is_python_var3_func():
     for dep in list3_install_seq:
         if dep not in list4_deps_done:
+            for name, version in candidate_dict.items():
+                if name == dep:
+                    sbo_version = version
+
             dep_base_check = dep.split("-")
             if dep_base_check[0] == "python" or \
                dep_base_check[0] == "python3":
@@ -412,20 +454,20 @@ def dep_is_python_var3_func():
                         dep_base_check[1].rstrip("0123456789")
                     )
                     if dep_base_check in python_dict:
-                        get_version_of_dep()
+                        # get_version_of_dep()
                         dep_status = ("--> [INSTALLED] version is "
                                       + dep
                                       + " "
                                       + python_dict.get(dep_base_check)
                                       )
-                        print(dep + " " + version_dep_list[0])
+                        print(dep + " " + sbo_version)
                         print(dep_status)
                         print("")
                         list4_deps_done.append(dep)
                         with open(os.path.join(
                                 os.environ['HOME'], prog_build_path[0],
                                 "installseq.txt"), "a") as f:
-                            f.write(dep + " " + version_dep_list[0] + " "
+                            f.write(dep + " " + sbo_version + " "
                                     + dep_status + "\n")
                 except(IndexError):
                     continue
@@ -434,41 +476,48 @@ def dep_is_python_var3_func():
 def dep_is_python_soft_func():
     for dep in list3_install_seq:
         if dep not in list4_deps_done:
+            for name, version in candidate_dict.items():
+                if name == dep:
+                    sbo_version = version
+
             if "py" in dep and "python" not in dep:
                 dep_soft_check = ''.join(
                     [letter for letter in dep if not letter.isdigit()]
                 )
                 if dep_soft_check in python_dict:
-                    get_version_of_dep()
+                    # get_version_of_dep()
                     dep_status = ("--> [MAY BE INSTALLED] version is "
                                   + dep_soft_check
                                   + " "
                                   + python_dict.get(dep_soft_check)
                                   )
-                    print(dep + " " + version_dep_list[0])
+                    print(dep + " " + sbo_version)
                     print(dep_status)   
                     print("")
                     list4_deps_done.append(dep)
                     with open(os.path.join(
                             os.environ['HOME'], prog_build_path[0],
                             "installseq.txt"), "a") as f:
-                        f.write(dep + " " + version_dep_list[0] + " "
+                        f.write(dep + " " + sbo_version + " "
                                 + dep_status + "\n")
 
 
 def dep_is_not_installed_func():
     for dep in list3_install_seq:
         if dep not in list4_deps_done:
+            for name, version in candidate_dict.items():
+                if name == dep:
+                    sbo_version = version
+
             dep_vers = package_dict.get(dep)
-            get_version_of_dep()
-            get_version_of_dep()
-            print(dep + " " + version_dep_list[0])
+            # get_version_of_dep()
+            print(dep + " " + sbo_version)
             print("")
             list4_deps_done.append(dep)
             with open(os.path.join(
                     os.environ['HOME'], prog_build_path[0],
                     "installseq.txt"), "a") as f:
-                f.write(dep + " " + version_dep_list[0] + "\n")
+                f.write(dep + " " + sbo_version + "\n")
 
 
 # Let's get started
@@ -479,6 +528,12 @@ check_for_old_build_func()
 
 sbo_dirs = []
 make_sbo_dir_list_func()
+
+package_dict = {}
+make_dict_of_packages_func()
+
+python_dict  = {}
+make_dict_of_python_packages_func()
 
 prog_base = input("\nWhat program are we building? ")
 prog_name = prog_base.strip()
@@ -496,14 +551,11 @@ for x in range(100):
 
 iterate_for_permissions()
 
+candidate_dict = {}
+make_dict_of_candidate_versions_func()
+
 list3_install_seq = []
 show_dependency_list_func()
-
-package_dict = {}
-make_dict_of_packages_func()
-
-python_dict  = {}
-make_dict_of_python_packages_func()
 
 # Start the list
 create_install_list_func()
