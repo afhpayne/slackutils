@@ -2,7 +2,7 @@
 
 # MIT License
 
-# Copyright (c) 2019-2020 Andrew Payne
+# Copyright (c) 2019-2022 Andrew Payne
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -521,70 +521,86 @@ def dep_is_not_installed_func():
 
 
 # Let's get started
-hello_string()
-make_slackstack_dir_func()
-clone_repo_func()
-check_for_old_build_func()
+# hello_string()
+# make_slackstack_dir_func()
+# clone_repo_func()
+# check_for_old_build_func()
 
-sbo_dirs = []
-make_sbo_dir_list_func()
+# sbo_dirs = []
+# make_sbo_dir_list_func()
 
-package_dict = {}
-make_dict_of_packages_func()
+# package_dict = {}
+# make_dict_of_packages_func()
 
-python_dict  = {}
-make_dict_of_python_packages_func()
 
-prog_base = input("\nWhat program are we building? ")
-prog_name = prog_base.strip()
 
-prog_build_path = []
-make_build_tree_func()
+# TEST CODE  --------------------------------------------------------------------------------------
+thelist = []
+number = 0
+for item in os.listdir("/usr/bin/"):
+    number+=1
+    thelist.append(item)
+    thelist.sort()
+print(thelist)
+print(number)
+exit(1)
+# end test
 
-copy_to_build_dir_func()
 
-list1_checked_for_deps = []
-list2_is_a_dep = []
-for x in range(100):
-    iterate_for_dependencies()
-    copy_dependencies_func()
 
-iterate_for_permissions()
+# python_dict  = {}
+# make_dict_of_python_packages_func()
 
-candidate_dict = {}
-make_dict_of_candidate_versions_func()
+# prog_base = input("\nWhat program are we building? ")
+# prog_name = prog_base.strip()
 
-list3_install_seq = []
-show_dependency_list_func()
+# prog_build_path = []
+# make_build_tree_func()
 
-# Start the list
-create_install_list_func()
+# copy_to_build_dir_func()
 
-version_dep_list = []
-list4_deps_done = []
-dep_is_installed_func()
-dep_is_python_var1_func()
-dep_is_python_var2_func()
-dep_is_python_var3_func()
-dep_is_python_soft_func()
-dep_is_not_installed_func()
+# list1_checked_for_deps = []
+# list2_is_a_dep = []
+# for x in range(100):
+#     iterate_for_dependencies()
+#     copy_dependencies_func()
 
-print("\nto", prog_build_path[0], "\n")
+# iterate_for_permissions()
 
-grab_y_n = input("Run slackgrab.py to get the tarballs (y/n)? ")
-if grab_y_n == "Y" or grab_y_n == "y":
-    progpath = sys.path[0]
-    progpath_list = []
-    for item in (os.listdir(path=progpath)):
-        progpath_list.append(item)
-    if "slackgrab.py" in progpath_list:
-        subprocess.run(["slackgrab.py", "--skip"])
-        exit(0)
-    else:
-        print("")
-        print("Missing slackgrab.py script!")
-        print("Please make sure it is in the same dir as slackstack.py")
-        print("")
-        exit(1)
-else:
-    exit(0)
+# candidate_dict = {}
+# make_dict_of_candidate_versions_func()
+
+# list3_install_seq = []
+# show_dependency_list_func()
+
+# # Start the list
+# create_install_list_func()
+
+# version_dep_list = []
+# list4_deps_done = []
+# dep_is_installed_func()
+# dep_is_python_var1_func()
+# dep_is_python_var2_func()
+# dep_is_python_var3_func()
+# dep_is_python_soft_func()
+# dep_is_not_installed_func()
+
+# print("\nto", prog_build_path[0], "\n")
+
+# grab_y_n = input("Run slackgrab.py to get the tarballs (y/n)? ")
+# if grab_y_n == "Y" or grab_y_n == "y":
+#     progpath = sys.path[0]
+#     progpath_list = []
+#     for item in (os.listdir(path=progpath)):
+#         progpath_list.append(item)
+#     if "slackgrab.py" in progpath_list:
+#         subprocess.run(["slackgrab.py", "--skip"])
+#         exit(0)
+#     else:
+#         print("")
+#         print("Missing slackgrab.py script!")
+#         print("Please make sure it is in the same dir as slackstack.py")
+#         print("")
+#         exit(1)
+# else:
+#     exit(0)
