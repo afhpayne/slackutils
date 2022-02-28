@@ -24,18 +24,57 @@
 
 # 79 spaces-------------------------------------------------------------------|
 
-# build dictionary of local apps and libraries--------------------------------|
 import glob
 import os
 from pathlib import Path
 import shutil
 
-# set home directory
-home = str(Path.home())
+# Software Data:
+soft_name = "Slackstack"
+soft_tag  = "a slackbuild utility"
 
+# Version
+soft_vers = "0.10.0"
+
+# set home directory
+path = "~"
+home = os.path.expanduser(path)
+
+# lists and dictionaries
 installed_dict = {}
 
+sbo_categories = []
+sbo_paths = {}
+sbo_app_list = []
+sbo_ver_list = []
+sbo_av_dict = {}
 
+deps_added_list = []
+deps_checked_list = []
+index_dict = {}
+
+
+# This is where we set the path for personal repos, paths here get priority
+# First priority
+dir_dev = os.path.join(home, "slackware", "dev_slack", "")
+# Second priority
+dir_dbs = os.path.join(home, "slackware", "dbs_slackware", "")
+# This is where the local slackbuilds git repo is stored
+dir_sbo = os.path.join(home, "slackstack", "slackbuilds", "")
+
+# This is the path where slackstack assembles the builds
+dir_bld = os.path.join(home, "slackstack", "")
+
+
+def hello_func():
+    os.system("clear")
+    welstr = ("Welcome to " + soft_name + " version "
+              + soft_vers + ", " + soft_tag + ".")
+    print("\n" + welstr)
+    print("")
+
+
+# build dictionary of local apps and libraries--------------------------------|
 def build_dict_local_apps():
     for item in os.listdir("/var/log/packages/"):
         item = item.split(("-"))
@@ -74,6 +113,8 @@ def build_dict_local_apps():
         if not installed_dict.get(str(item)):
             installed_dict.update({item:"(version_unkown)"})    
 
+# checking installed libraries may be overkill for most purposes
+# comment out if not needed
     for item in os.listdir("/usr/lib64"):
         if item[0:3] == "lib":
             itemname = item[3:].split(".")
@@ -83,15 +124,10 @@ def build_dict_local_apps():
         else:
             if not installed_dict.get(str(itemname)):
                 installed_dict.update({itemname:"(system library)"})
+
     return installed_dict
 
 # build dictionary of remote apps and libraries-------------------------------|
-sbo_categories = []
-sbo_paths = {}
-sbo_infofiles = []
-sbo_app_list = []
-sbo_ver_list = []
-sbo_av_dict = {}
 
 
 def build_dict_remote_apps():
@@ -128,8 +164,8 @@ def build_dict_remote_apps():
                     sbo_ver_list.append(version[1])
 
     sbo_av_dict = dict(zip(sbo_app_list, sbo_ver_list))
-    return sbo_av_dict
 
+    return sbo_av_dict
 
 
 def check_available_builds(app):
@@ -169,7 +205,7 @@ def clean_tree():
 def copy_slackbuild_dirs_to_tree(app):
     remote_path = (os.path.join(sbo_paths[str(app)],app))
     local_path = (os.path.join(home,"slackstack",app_0+"-tree"+"/",app+"/"))
-    print("Copying", app, "to", local_path)
+    print("Copying", app, "to", local_path, "\n")
     shutil.copytree(remote_path,local_path)
 
 
@@ -199,15 +235,13 @@ def check_for_dependencies():
 
 
 # Let's get started
+hello_func()
 build_dict_remote_apps()
 build_dict_local_apps()
 
 print("What app are we building?")
 app_0 = input("---> ")
 print("")
-
-x = 0
-index_dict = {}
 
 app = app_0
 check_available_builds(app)
@@ -219,11 +253,7 @@ copy_slackbuild_dirs_to_tree(app)
 
 print("\nDependencies:\n")
 y = 1
-deps_added_list = []
-deps_checked_list = []
-requires = []
 for y in range (1, 10):
     check_for_dependencies()
 
-
-exit(1)
+exit()
