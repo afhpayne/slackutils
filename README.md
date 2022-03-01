@@ -1,9 +1,9 @@
 ## Slackutils
 
-The goal of Slackutils is to make working with slackbuilds easier.
+The goal of Slackutils is to make working with slackbuilds easy.
 
-#### There are two utilities -- slackstack and slackgrab
-If both programs are executable and in the same directory, slackstack.py will automatically call slackgrab.py when it's time to download tarballs.<br />
+#### There are two programs: __slackstack.py__ and __slackgrab.py__
+If both programs are executable and in the same directory, slackstack.py can call slackgrab.py to automatically download tarballs.<br />
 
 #### Slackstack:<br />
 Uses a local clone of the slackbuilds.org git repository <br />
@@ -21,9 +21,12 @@ Uses a local clone of the slackbuilds.org git repository <br />
 4. Allows the user to use the default build location (/home/user/slackstack) or to choose another
 
 ### Dependencies
-Everything is written in Python 3.8 and has no dependencies beyond the standard python library.
+Everything is written in Python 3.9 and has no dependencies beyond the standard python library.
 
 ### Release Notes for Slackstack:<br />
+__0.10.2__ clean up, git pull fixed<br />
+__0.10.0__ major rewrite and refactor, transient version bug elminated, bug removal, simplify code.<br />
+__0.9.5__ clean up code<br />
 __0.9.3__ clean up code<br />
 __0.9.2__ refactor and fix bugs<br />
 __0.9.1__ refactor and fix scope bug<br />
@@ -70,4 +73,4 @@ __0.5.0__ slackgrab is a major revision.  The code is cleaner and handles *.info
 ### Known bugs<br />
 To handle incomplete tarball names that happen with Github, slackgrab does a sanity check on the tarball. However if a developer names their tarball something other than their program name -- say, foo-bar is the program name but the tarball is called bar.tar.gz -- slackgrab will misname it. This is very unusual, but I found one example of it so there may be others.
 
-32-bit slackbuild support is fairly trivial to add for someone who needs it, but I personally have no plans to include it right now<br />
+32-bit slackbuild support is fairly trivial to add for someone who needs it, but I personally have no plans to include it.<br />

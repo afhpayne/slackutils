@@ -2,7 +2,7 @@
 
 # MIT License
 
-# Copyright (c) 2019-2020 Andrew Payne
+# Copyright (c) 2019-2022 Andrew Payne
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +26,6 @@
 
 import glob
 import os
-import pkg_resources
-import re
-import readline
 import shutil
 import stat
 import subprocess
@@ -40,551 +37,269 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.9.5"
+soft_vers = "0.10.2"
+
+# set home directory
+path = "~"
+home = os.path.expanduser(path)
+
+# lists and dictionaries
+installed_dict = {}
+
+sbo_categories = []
+sbo_paths = {}
+sbo_app_list = []
+sbo_ver_list = []
+sbo_av_dict = {}
+
+deps_added_list = []
+deps_checked_list = []
+index_dict = {}
 
 # This is where we set the path for personal repos, paths here get priority
 # First priority
-dir_dev = os.path.join(
-    os.environ['HOME'], "slackware", "dev_slack", "")
+dir_dev = os.path.join(home, "slackware", "dev_slack", "")
 # Second priority
-dir_dbs = os.path.join(
-    os.environ['HOME'], "slackware", "dbs_slackware", "")
-# This is the path where slackstack assembles the builds
-dir_stack = os.path.join(
-    os.environ['HOME'], "slackstack", "")
+dir_dbs = os.path.join(home, "slackware", "dbs_slackware", "")
 # This is where the local slackbuilds git repo is stored
-dir_git = os.path.join(
-    os.environ['HOME'], "slackstack", "slackbuilds", "")
+dir_sbo = os.path.join(home, "slackstack", "slackbuilds", "")
+
+# This is the path where slackstack assembles the builds
+dir_bld = os.path.join(home, "slackstack", "")
+
+# This is the git repo to use for sbo
+sbo_git = "https://gitlab.com/SlackBuilds.org/slackbuilds.git"
 
 
-def hello_string():
+def hello_func():
     os.system("clear")
-    welstr = ("Welcome to " + soft_name + " version "
-              + soft_vers + ", " + soft_tag + ".")
+    welstr = ("Welcome to " \
+              + soft_name \
+              + " version "
+              + soft_vers + ", " \
+              + soft_tag + ".")
     print("\n" + welstr)
     print("")
 
 
 def make_slackstack_dir_func():
-    try:
-        os.mkdir(os.path.join(dir_stack))
-    except(FileExistsError):
-        pass
+    subprocess.call(["mkdir", "-p", dir_sbo])
 
 
-def clone_repo_func():
-    if os.path.isdir(os.path.join(dir_stack, "slackbuilds", "")):
-        print("Found " + os.path.join(dir_stack, "slackstack", ""))
-        print("Performing git pull...")
-        git_fail = (subprocess.call(
-            ["git", "-C", os.path.join(dir_stack, "slackbuilds", ""), "pull"])
-                    )
-        if git_fail > 0:
-            time.sleep(2)
-            hello_string()
-            print("Found local Slackbuild repo but can't update.")
-            print("Do you have internet? Using repo as is....")
-        else:
-            time.sleep(1)
-            hello_string()
-            print("Local Slackbuild repo up to date.")
+def dir_sbo_git_update_func():
+    print("Updating git")
+    if os.path.isdir(dir_sbo + ".git"):
+        subprocess.call(["git", "-C", dir_sbo, "pull"])
     else:
-        print("Local copy of slackbuilds git not found in "
-              + os.path.join(dir_stack, ""))
-        make_local_git = input("Clone it now? y/n ")
-        if make_local_git == "y" or make_local_git == "Y":
-            git_fail = (subprocess.call(
-                ["git", "clone",
-                 "https://gitlab.com/SlackBuilds.org/slackbuilds.git",
-                 os.path.join(dir_stack, "slackbuilds", "")])
-                        )
-            if git_fail > 0:
-                print("\nCan't create a local Slackbuilds repo.")
-                print("Do you have internet? Exiting...\n")
-                exit(1)
-            else:
-                time.sleep(1)
-                hello_string()
-                print("Local Slackbuild repo up to date.")
-        else:
-            print("Please create a local clone to use slackstack")
-            exit(1)
+        subprocess.call(["git", "clone", sbo_git, dir_sbo])
+    time.sleep(1)
 
 
-def check_for_old_build_func():
-    check_path = glob.glob(
-        os.path.join(os.environ['HOME'], "slackstack", "*tree", ""))
-    if check_path:
-        check_path = (check_path[0].strip())
-        print("\nFound a previous build:", check_path)
-        remove_or_quit = input("(r)emove or (q)uit? ")
-        if remove_or_quit == "R" or remove_or_quit == "r":
-            shutil.rmtree(os.path.join(check_path))
-        else:
-            exit(1)
-
-
-def make_sbo_dir_list_func():
-    for name in os.listdir(dir_git):
-        if os.path.isdir(os.path.join(dir_git, name)) is True:
-            if "." not in name:
-                sbo_dirs.append(name.strip())
-    sbo_dirs.sort()
-
-
-def make_build_tree_func():
-    x = 0
-    for path in os.walk(dir_dev):
-        if os.path.isdir(path[0]) and prog_name == (
-                path[0].split("/")[-1]):
-            prog_build_dir = (prog_name + "-tree")
-            x = 1
-        else:
-            pass
-    for path in os.walk(dir_dbs):
-        if x == 0 and os.path.isdir(path[0]) and prog_name == (
-                path[0].split("/")[-1]):
-            prog_build_dir = (prog_name + "-tree")
-            x = 1
-        else:
-            pass
-    for path in os.walk(dir_git):
-        if x == 0 and os.path.isdir(path[0]) and prog_name == (
-                path[0].split("/")[-1]):
-            prog_build_dir = (prog_name + "-tree")
-            x = 1
-        else:
-            pass
-    if x == 0:
-        print("\nCouldn't find " + prog_name + ", exiting...\n")
-        exit()
-    else:
-        prog_build_path.append(os.path.join(dir_stack, prog_build_dir))
-        print("\nBuild path is " + prog_build_path[0])
-        os.mkdir(prog_build_path[0])
-
-
-def copy_to_build_dir_func():
-    path_to_prog = os.path.join(dir_dbs + prog_name)
-    path_to_build = os.path.join(prog_build_path[0] + "/")
-    if os.path.isdir(path_to_prog):
-        try:
-            shutil.copytree(path_to_prog, path_to_build + prog_name)
-        except FileExistsError:
-            pass
-    path_to_prog = os.path.join(dir_dev + prog_name)
-    if os.path.isdir(path_to_prog):
-        try:
-            shutil.copytree(path_to_prog, path_to_build + prog_name)
-        except FileExistsError:
-            pass
-    else:
-        for dir in sbo_dirs:
-            path_to_prog = (dir_git + dir + "/" + prog_name)
-            if os.path.isdir(path_to_prog):
-                try:
-                    shutil.copytree(path_to_prog, path_to_build + prog_name)
-                except FileExistsError:
-                    pass
-
-
-def iterate_for_dependencies():
-    path_to_build = os.path.join(prog_build_path[0] + "/")
-    for directory in os.listdir(path_to_build):
-        prog_name = directory
-
-        if prog_name != "" and prog_name not in list1_checked_for_deps:
-            list1_checked_for_deps.append(prog_name)
-            infofile = glob.glob(
-                os.path.join(path_to_build, prog_name, "*.info"))
-            if infofile:
-                infofile = infofile[0]
-                with open(infofile) as i:
-                    infofile = i.read()
-
-                for line in infofile.split("\n"):
-                    if "REQUIRES=" in line:
-                        depends = line.strip()
-                        depends = depends.split('"')[1]
-                        for dep in depends.split(" "):
-                            list2_is_a_dep.append(dep)
-
-                            
-
-def copy_dependencies_func():    
-    for item in list2_is_a_dep:
-        prog_name = item
-        path_to_prog = os.path.join(dir_dbs + prog_name)
-        path_to_build = os.path.join(prog_build_path[0] + "/")
-        if os.path.isdir(path_to_prog):
-            try:
-                shutil.copytree(
-                    path_to_prog, path_to_build + prog_name
-                )
-            except FileExistsError:
-                pass
-        path_to_prog = os.path.join(dir_dev + prog_name)
-        if os.path.isdir(path_to_prog):
-            try:
-                shutil.copytree(
-                    path_to_prog, path_to_build + prog_name
-                )
-            except FileExistsError:
-                pass
-        else:
-            for dir in sbo_dirs:
-                path_to_prog = (dir_git + dir + "/" + prog_name)
-                if os.path.isdir(path_to_prog):
-                    try:
-                        shutil.copytree(
-                            path_to_prog, path_to_build + prog_name
-                        )
-                    except FileExistsError:
-                        pass
-
-
-def iterate_for_permissions():
-    path_to_build = os.path.join(prog_build_path[0] + "/")
-    for directory in os.scandir(path_to_build):
-        prog_name = directory
-        buildfile = glob.glob(os.path.join(
-            path_to_build, prog_name, "*.SlackBuild")
-                              )
-        if buildfile:
-            buildfile = buildfile[0]
-            os.chmod(os.path.join(buildfile), (
-                stat.S_IRUSR |
-                stat.S_IWUSR |
-                stat.S_IXUSR |
-                stat.S_IRGRP |
-                stat.S_IXGRP |
-                stat.S_IROTH |
-                stat.S_IXOTH )
-                     )
-
-
-def make_dict_of_candidate_versions_func():
-    path_to_build = os.path.join(prog_build_path[0] + "/")
-    for directory in os.listdir(path_to_build):
-        prog_name = directory
-
-        if prog_name != "":
-            infofile = glob.glob(
-                os.path.join(path_to_build, prog_name, "*.info"))
-            if infofile:
-                infofile = infofile[0]
-                with open(infofile) as i:
-                    infofile = i.read()
-
-                for line in infofile.split("\n"):
-                    if "VERSION=" in line:
-                        version = line.strip()
-                        version = version.split('"')[1]
-                        for ver in version.split(" "):
-                            candidate_dict.update({prog_name : ver})
-
-
-def show_dependency_list_func():
-    print("\nAdding dependencies for: " + prog_name + "\n")
-    for dep in list2_is_a_dep[::-1]:
-        if dep:
-            if dep not in list3_install_seq:
-                list3_install_seq.append(dep.lower())
-    list3_install_seq.append(prog_name)
-
-
-def make_dict_of_packages_func():
-    app_data_search = re.compile("-[^a-z]+[\S]*[a-z]*")
-    app_ver_search = re.compile('-[x|n].*')
-    app_tag_search = re.compile("_\w+$")
-
+# build dictionary of local apps and libraries--------------------------------|
+def build_dict_local_apps():
     for item in os.listdir("/var/log/packages/"):
-        app_data_match = app_data_search.search(item)
-        app_name = item.replace(app_data_match.group(0), "")
-        # try:
-        app_arch_match = app_ver_search.search(app_data_match.group(0))
-        if app_arch_match is not None:
-            app_vers = app_data_match.group(0).replace(
-                app_arch_match.group(0), "").lstrip("-")
+        item = item.split(("-"))
+        itembuild = item[-1].strip()
+        if len(item[-1]) > 3:
+            itemversion = item[-3]+" ("+itembuild+")"
+            if len(item) == 7:
+                itemname = item[0]+"-"+item[1]+"-"+item[2]+"-"+item[3]
+                installed_dict.update({itemname:itemversion})
+            elif len(item) == 6:
+                itemname = item[0]+"-"+item[1]+"-"+item[2]
+                installed_dict.update({itemname:itemversion})
+            elif len(item) == 5:
+                itemname = item[0]+"-"+item[1]
+                installed_dict.update({itemname:itemversion})
+            else:
+                itemname = item[0]
+                installed_dict.update({itemname:itemversion})
+        # no tag means it's in the base system
         else:
-            app_vers = app_data_match
-            app_vers = app_vers.group(0)
-        app_tag_match = app_tag_search.search(item)
-        if app_tag_match is not None:
-            app_tag = app_tag_match.group(0).lstrip("_")
-            app_vers = (app_vers + " (" + app_tag + ")")
+            itemversion = item[-3]
+            if len(item) == 7:
+                itemname = item[0]+"-"+item[1]+"-"+item[2]+"-"+item[3]
+                installed_dict.update({itemname:itemversion})
+            elif len(item) == 6:
+                itemname = item[0]+"-"+item[1]+"-"+item[2]
+                installed_dict.update({itemname:itemversion})
+            elif len(item) == 5:
+                itemname = item[0]+"-"+item[1]
+                installed_dict.update({itemname:itemversion})
+            else:
+                itemname = item[0]
+                installed_dict.update({itemname:itemversion})    
+
+    for item in os.listdir("/usr/bin/"):
+        if not installed_dict.get(str(item)):
+            installed_dict.update({item:"(version_unkown)"})    
+
+# checking installed libraries may be overkill for most purposes
+# comment out if not needed
+    for item in os.listdir("/usr/lib64"):
+        if item[0:3] == "lib":
+            itemname = item[3:].split(".")
+            itemname = itemname[0]
+            if not installed_dict.get(str(itemname)):
+                installed_dict.update({itemname:"(system library)"})
         else:
-            app_vers = app_vers
-        package_dict.update([(app_name.lower(),app_vers)])
+            if not installed_dict.get(str(itemname)):
+                installed_dict.update({itemname:"(system library)"})
+
+    return installed_dict
+
+# build dictionary of remote apps and libraries-------------------------------|
 
 
-def make_dict_of_python_packages_func():
-    for item in pkg_resources.working_set:
-        item = str(item).split()
-        if item[0] not in python_dict:
-            python_dict.update([(item[0].lower(),item[1])])
+def build_dict_remote_apps():
+    sbo_av_dict = {}
+    for folder in glob.glob(dir_dev):
+        if os.path.isdir(folder) and folder not in sbo_categories:
+            sbo_categories.append(folder)
+    
+    for folder in glob.glob(dir_dbs):
+        if os.path.isdir(folder) and folder not in sbo_categories:
+            sbo_categories.append(folder)
+
+    for folder in glob.glob(dir_sbo + "*"):
+        if os.path.isdir(folder) and folder not in sbo_categories:
+            sbo_categories.append(folder)
+    
+    for folder in sbo_categories:
+        for path in os.listdir(folder):
+            if not sbo_paths.get(str(path)) \
+               and os.path.isdir(folder+"/"+path) \
+               and path != ".git":
+                # print(folder+"/"+path)
+                sbo_paths.update({path:folder})
+
+    for path, folder in sbo_paths.items():
+        with open(os.path.join(folder,path,path+".info"),"r") as f:
+            lines = f.readlines()
+            for line in lines:
+                if "PRGNAM" in line:
+                    prgnam = line.split('"')
+                    sbo_app_list.append(prgnam[1])
+                if "VERSION" in line:
+                    version = line.split('"')
+                    sbo_ver_list.append(version[1])
+
+    sbo_av_dict = dict(zip(sbo_app_list, sbo_ver_list))
+    return sbo_av_dict
 
 
-# def get_version_of_dep():
-    # for prog_name, version in candidate_dict.items():
-    #     print(prog_name, version)
-    # for dep in list3_install_seq:
-    #     infofile = glob.glob(os.path.join(prog_build_path[0], dep, "*.info"))
-    #     if infofile:
-    #         infofile = infofile[0]
-    #         with open(infofile) as gvoc:
-    #             infofile = gvoc.read()
-    #         for line in infofile.split("\n"):
-    #             if "VERSION=" in line:
-    #                 version_dep = line.strip()
-    #                 version_dep = version_dep.split('"')[1]
-    #                 # print(version_dep)
-    #                 version_dep_list.clear()
-    #                 version_dep_list.append(version_dep)
-    #                 # print(version_dep_list)
+def check_available_builds(app):
+    for a,v in build_dict_remote_apps().items():
+    # for a,v in sbo_av_dict.items():
+        if a == app:
+            print("Available version:",a,v)
+            found = 1
+            break
+        else:
+            found = 0
+    if found == 0:
+        print(app, "SlackBuild not found \n")
+        exit()
 
 
-def create_install_list_func():
-    with open(os.path.join(
-            os.environ['HOME'], prog_build_path[0], "installseq.txt"),
-              "a") as f:
-        f.write("Install order:\n")
+def check_installed_builds(app):
+    for a,v in build_dict_local_apps().items():
+    # for a,v in installed_dict.items():
+        if a == app:
+            print("Installed version:",a,v,"\n")
+            found = 1
+            break
+        else:
+            found = 0
+    if found == 0:
+        print("Installed version:", "NONE", "\n")
 
 
-def dep_is_installed_func():
-    for dep in list3_install_seq:
-        if dep not in list4_deps_done:
-            for name, version in candidate_dict.items():
-                if name == dep:
-                    sbo_version = version
-
-            if package_dict.get(dep) is not None:
-                dep_vers = package_dict.get(dep)
-                # get_version_of_dep()
-                dep_status = ("--> [INSTALLED] version is "
-                              + dep
-                              + " "
-                              + package_dict.get(dep)
-                              )
-                print(dep + " " + sbo_version)
-                print(dep_status)
-                print("")
-                list4_deps_done.append(dep)
-                with open(os.path.join(
-                        os.environ['HOME'], prog_build_path[0],
-                        "installseq.txt"), "a") as f:
-                    f.write(dep + " " + sbo_version + " "
-                            + dep_status + "\n")
+def clean_tree():
+    generic_path = (os.path.join(home,"slackstack"))
+    kill_path = glob.glob(os.path.join(generic_path, "*-tree", ""))
+    if kill_path:
+        shutil.rmtree(os.path.join(kill_path[0]))
 
 
-def dep_is_python_var1_func():
-    for dep in list3_install_seq:
-        if dep not in list4_deps_done:
-            for name, version in candidate_dict.items():
-                if name == dep:
-                    sbo_version = version
-
-            if python_dict.get(dep) is not None and \
-               package_dict.get(dep) is None:
-                dep_vers = python_dict.get(dep)
-                # get_version_of_dep()
-                dep_status = ("--> [INSTALLED] version is "
-                              + dep
-                              + " "
-                              + python_dict.get(dep)
-                              )
-                print(dep + " " + sbo_version)
-                print(dep_status)
-                print("")
-                list4_deps_done.append(dep)
-                with open(os.path.join(
-                        os.environ['HOME'], prog_build_path[0],
-                        "installseq.txt"), "a") as f:
-                    f.write(dep + " " + sbo_version + " "
-                            + dep_status + "\n")
+def copy_slackbuild_dirs_to_tree(app):
+    remote_path = (os.path.join(sbo_paths[str(app)],app))
+    local_path = (os.path.join(home,"slackstack",app_0+"-tree"+"/",app+"/"))
+    print("Copying", app, "to", local_path, "\n")
+    shutil.copytree(remote_path,local_path)
 
 
-def dep_is_python_var2_func():
-    for dep in list3_install_seq:
-        if dep not in list4_deps_done:
-            for name, version in candidate_dict.items():
-                if name == dep:
-                    sbo_version = version
-
-            if "python" in dep and dep != "python3":
-                try:
-                    dep_base_check = dep.split("-")
-                    if dep_base_check[1] == "python" or \
-                       dep_base_check[1] == "python3":
-                        dep_base_check = str(
-                            dep_base_check[0].rstrip("0123456789")
-                        )
-                        if dep_base_check in python_dict:
-                            # get_version_of_dep()
-                            dep_status = ("--> [INSTALLED] version is "
-                                          + dep
-                                          + " "
-                                          + python_dict.get(dep_base_check)
-                                          )
-                            print(dep + " " + sbo_version)
-                            print(dep_status)
-                            print("")
-                            list4_deps_done.append(dep)
-                            with open(os.path.join(
-                                    os.environ['HOME'], prog_build_path[0],
-                                    "installseq.txt"), "a") as f:
-                                f.write(dep + " " + sbo_version + " "
-                                        + dep_status + "\n")
-                except(IndexError):
-                    continue
+def check_for_dependencies():
+    lines = []
+    local_path = (os.path.join(home,"slackstack",app_0+"-tree"+"/"))
+    for item in os.listdir(local_path):
+        if item not in deps_checked_list:
+            deps_checked_list.append(item)
+            with open(local_path+item+"/"+item+".info", "r") as f:
+                lines = f.readlines()
+        else:
+            continue
+    for line in lines:
+        if "REQUIRES" in line and len(line) > 12:
+            line = line.replace("REQUIRES=","").replace('"','').strip()
+            line = line.split(" ")
+            for dep in line:
+                deps_added_list.append(dep)
+                if dep not in index_dict.values():
+                    counter = (len(deps_added_list))
+                    print(counter)
+                    index_dict.update({counter:dep})
+                    check_available_builds(dep)
+                    check_installed_builds(dep)
+                    copy_slackbuild_dirs_to_tree(dep)
 
 
-def dep_is_python_var3_func():
-    for dep in list3_install_seq:
-        if dep not in list4_deps_done:
-            for name, version in candidate_dict.items():
-                if name == dep:
-                    sbo_version = version
-
-            dep_base_check = dep.split("-")
-            if dep_base_check[0] == "python" or \
-               dep_base_check[0] == "python3":
-                try:
-                    dep_base_check = str(
-                        dep_base_check[1].rstrip("0123456789")
-                    )
-                    if dep_base_check in python_dict:
-                        # get_version_of_dep()
-                        dep_status = ("--> [INSTALLED] version is "
-                                      + dep
-                                      + " "
-                                      + python_dict.get(dep_base_check)
-                                      )
-                        print(dep + " " + sbo_version)
-                        print(dep_status)
-                        print("")
-                        list4_deps_done.append(dep)
-                        with open(os.path.join(
-                                os.environ['HOME'], prog_build_path[0],
-                                "installseq.txt"), "a") as f:
-                            f.write(dep + " " + sbo_version + " "
-                                    + dep_status + "\n")
-                except(IndexError):
-                    continue
-
-
-def dep_is_python_soft_func():
-    for dep in list3_install_seq:
-        if dep not in list4_deps_done:
-            for name, version in candidate_dict.items():
-                if name == dep:
-                    sbo_version = version
-
-            if "py" in dep and "python" not in dep:
-                dep_soft_check = ''.join(
-                    [letter for letter in dep if not letter.isdigit()]
-                )
-                if dep_soft_check in python_dict:
-                    # get_version_of_dep()
-                    dep_status = ("--> [MAY BE INSTALLED] version is "
-                                  + dep_soft_check
-                                  + " "
-                                  + python_dict.get(dep_soft_check)
-                                  )
-                    print(dep + " " + sbo_version)
-                    print(dep_status)   
-                    print("")
-                    list4_deps_done.append(dep)
-                    with open(os.path.join(
-                            os.environ['HOME'], prog_build_path[0],
-                            "installseq.txt"), "a") as f:
-                        f.write(dep + " " + sbo_version + " "
-                                + dep_status + "\n")
-
-
-def dep_is_not_installed_func():
-    for dep in list3_install_seq:
-        if dep not in list4_deps_done:
-            for name, version in candidate_dict.items():
-                if name == dep:
-                    sbo_version = version
-
-            dep_vers = package_dict.get(dep)
-            # get_version_of_dep()
-            print(dep + " " + sbo_version)
-            print("")
-            list4_deps_done.append(dep)
-            with open(os.path.join(
-                    os.environ['HOME'], prog_build_path[0],
-                    "installseq.txt"), "a") as f:
-                f.write(dep + " " + sbo_version + "\n")
+def iterate_for_permissions_func():
+    for item in glob.glob(dir_bld + "*tree/*/*"):
+        if "SlackBuild" in item:
+            print(item)
+            os.chmod(item, stat.S_IEXEC)
 
 
 # Let's get started
-hello_string()
+hello_func()
+
 make_slackstack_dir_func()
-clone_repo_func()
-check_for_old_build_func()
+dir_sbo_git_update_func()
 
-sbo_dirs = []
-make_sbo_dir_list_func()
+hello_func()
 
-package_dict = {}
-make_dict_of_packages_func()
+build_dict_remote_apps()
+build_dict_local_apps()
 
-python_dict  = {}
-make_dict_of_python_packages_func()
+print("What app are we building?")
+app_0 = input("---> ")
+print("")
 
-prog_base = input("\nWhat program are we building? ")
-prog_name = prog_base.strip()
+app = app_0
+check_available_builds(app)
+check_installed_builds(app)
 
-prog_build_path = []
-make_build_tree_func()
+clean_tree()
 
-copy_to_build_dir_func()
+copy_slackbuild_dirs_to_tree(app)
 
-list1_checked_for_deps = []
-list2_is_a_dep = []
-for x in range(100):
-    iterate_for_dependencies()
-    copy_dependencies_func()
+print("\nDependencies:\n")
+y = 1
+for y in range (1, 10):
+    check_for_dependencies()
 
-iterate_for_permissions()
+iterate_for_permissions_func()
 
-candidate_dict = {}
-make_dict_of_candidate_versions_func()
-
-list3_install_seq = []
-show_dependency_list_func()
-
-# Start the list
-create_install_list_func()
-
-version_dep_list = []
-list4_deps_done = []
-dep_is_installed_func()
-dep_is_python_var1_func()
-dep_is_python_var2_func()
-dep_is_python_var3_func()
-dep_is_python_soft_func()
-dep_is_not_installed_func()
-
-print("\nto", prog_build_path[0], "\n")
+if len(deps_added_list) == 0:
+    print("None!\n")
+else:
+    pass
 
 grab_y_n = input("Run slackgrab.py to get the tarballs (y/n)? ")
 if grab_y_n == "Y" or grab_y_n == "y":
-    progpath = sys.path[0]
-    progpath_list = []
-    for item in (os.listdir(path=progpath)):
-        progpath_list.append(item)
-    if "slackgrab.py" in progpath_list:
-        subprocess.run(["slackgrab.py", "--skip"])
-        exit(0)
-    else:
-        print("")
-        print("Missing slackgrab.py script!")
-        print("Please make sure it is in the same dir as slackstack.py")
-        print("")
-        exit(1)
+    subprocess.run(["slackgrab.py", "--skip"], cwd=sys.path[0])
 else:
-    exit(0)
+    pass
+
+exit()
