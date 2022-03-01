@@ -37,7 +37,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.10.3"
+soft_vers = "0.10.4"
 
 # set home directory
 path = "~"
@@ -55,6 +55,8 @@ sbo_av_dict = {}
 deps_added_list = []
 deps_checked_list = []
 index_dict = {}
+
+installseq_list = []
 
 # This is where we set the path for personal repos, paths here get priority
 # First priority
@@ -260,47 +262,7 @@ def iterate_for_permissions_func():
             os.chmod(item, stat.S_IEXEC)
 
 
-# def create_install_list_func():
-#     installseq_list = []
-#     n = len(index_dict) + 1
-#     y = 0
-#     z = 0
-#     for i in deps_added_list:
-#         if len(i) > y:
-#             y = len(i)
-#     for i in deps_added_list:
-#         if i in build_dict_local_apps().keys():
-#             z = (y + 2) - len(i)
-#             installseq_list.append(\
-#                                    str(n) \
-#                                    + " "*2 \
-#                                    + i \
-#                                    + " "*z \
-#                                    + build_dict_local_apps().get(i) \
-#                                    + "\t" \
-#                                    + "INSTALLED"
-#                                    + "\n")
-#             n-=1
-#         else:
-#             z = (y + 2) - len(i)
-#             installseq_list.append(\
-#                                    str(n) \
-#                                    + " "*2 \
-#                                    + i \
-#                                    + " "*z \
-#                                    + "not installed"
-#                                    + "\n")
-#             n-=1
-#     file_loc = glob.glob(dir_bld + "*tree")
-#     with open(os.path.join(file_loc[0], "installseq.txt"), "w") as f:
-#         f.write("Install order:\n")
-#         for i in reversed(installseq_list):
-#             f.write(i)
-#         f.close
-
-
 def create_install_list_func():
-    installseq_list = []
     n = len(index_dict) + 1
     y = 0
     z = 0
@@ -310,17 +272,14 @@ def create_install_list_func():
     for i in deps_added_list:
         if i in build_dict_local_apps().keys():
             z = (y + 2) - len(i)
-            installseq_list.append(\
-                                   str(n) \
-                                   + " "*2 \
-                                   + i \
-                                   + " "*z \
-                                   + build_dict_local_apps().get(i) \
-                                   + "\t" \
-                                   + "INSTALLED"
-                                   + "\n")
+            installseq_list.append(
+                str(n) + " "*2 + i + " "*z + build_dict_local_apps().get(i) \
+                + "\t" + "INSTALLED" + "\n\n"
+            )
             n-=1
-            installseq_list.append(i + build_dict_remote_apps().get(i) + "will replace")
+            installseq_list.append(
+                i + " " + build_dict_remote_apps().get(i)
+                + " will replace:\n")
         else:
             z = (y + 2) - len(i)
             installseq_list.append(\
