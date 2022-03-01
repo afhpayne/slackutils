@@ -34,7 +34,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.10.0"
+soft_vers = "0.10.1"
 
 # set home directory
 path = "~"
@@ -132,15 +132,15 @@ def build_dict_local_apps():
 
 def build_dict_remote_apps():
     sbo_av_dict = {}
-    for folder in glob.glob(home + "/slackware/dev_slack/"):
+    for folder in glob.glob(dir_dev):
         if os.path.isdir(folder) and folder not in sbo_categories:
             sbo_categories.append(folder)
     
-    for folder in glob.glob(home + "/slackware/dbs_slackware/"):
+    for folder in glob.glob(dir_dbs):
         if os.path.isdir(folder) and folder not in sbo_categories:
             sbo_categories.append(folder)
-    
-    for folder in glob.glob(home + "/slackstack/slackbuilds/*"):
+
+    for folder in glob.glob(dir_sbo + "*"):
         if os.path.isdir(folder) and folder not in sbo_categories:
             sbo_categories.append(folder)
     
@@ -164,7 +164,6 @@ def build_dict_remote_apps():
                     sbo_ver_list.append(version[1])
 
     sbo_av_dict = dict(zip(sbo_app_list, sbo_ver_list))
-
     return sbo_av_dict
 
 
