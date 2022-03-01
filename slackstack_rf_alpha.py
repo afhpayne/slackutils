@@ -26,15 +26,18 @@
 
 import glob
 import os
-from pathlib import Path
 import shutil
+import stat
+import subprocess
+import sys
+import time
 
 # Software Data:
 soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.10.1"
+soft_vers = "0.10.2"
 
 # set home directory
 path = "~"
@@ -65,13 +68,32 @@ dir_sbo = os.path.join(home, "slackstack", "slackbuilds", "")
 # This is the path where slackstack assembles the builds
 dir_bld = os.path.join(home, "slackstack", "")
 
+# This is the git repo to use for sbo
+sbo_git = "https://gitlab.com/SlackBuilds.org/slackbuilds.git"
+
 
 def hello_func():
     os.system("clear")
-    welstr = ("Welcome to " + soft_name + " version "
-              + soft_vers + ", " + soft_tag + ".")
+    welstr = ("Welcome to " \
+              + soft_name \
+              + " version "
+              + soft_vers + ", " \
+              + soft_tag + ".")
     print("\n" + welstr)
     print("")
+
+
+def make_slackstack_dir_func():
+    subprocess.call(["mkdir", "-p", dir_sbo])
+
+
+def dir_sbo_git_update_func():
+    print("Updating git")
+    if os.path.isdir(dir_sbo + ".git"):
+        subprocess.call(["git", "-C", dir_sbo, "pull"])
+    else:
+        subprocess.call(["git", "clone", sbo_git, dir_sbo])
+    time.sleep(1)
 
 
 # build dictionary of local apps and libraries--------------------------------|
@@ -233,8 +255,21 @@ def check_for_dependencies():
                     copy_slackbuild_dirs_to_tree(dep)
 
 
+def iterate_for_permissions_func():
+    for item in glob.glob(dir_bld + "*tree/*/*"):
+        if "SlackBuild" in item:
+            print(item)
+            os.chmod(item, stat.S_IEXEC)
+
+
 # Let's get started
 hello_func()
+
+make_slackstack_dir_func()
+dir_sbo_git_update_func()
+
+hello_func()
+
 build_dict_remote_apps()
 build_dict_local_apps()
 
@@ -254,5 +289,18 @@ print("\nDependencies:\n")
 y = 1
 for y in range (1, 10):
     check_for_dependencies()
+
+iterate_for_permissions_func()
+
+if len(deps_added_list) == 0:
+    print("None!\n")
+else:
+    pass
+
+grab_y_n = input("Run slackgrab.py to get the tarballs (y/n)? ")
+if grab_y_n == "Y" or grab_y_n == "y":
+    subprocess.run(["slackgrab.py", "--skip"], cwd=sys.path[0])
+else:
+    pass
 
 exit()
