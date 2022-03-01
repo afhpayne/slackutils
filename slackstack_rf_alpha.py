@@ -56,7 +56,6 @@ deps_added_list = []
 deps_checked_list = []
 index_dict = {}
 
-
 # This is where we set the path for personal repos, paths here get priority
 # First priority
 dir_dev = os.path.join(home, "slackware", "dev_slack", "")
