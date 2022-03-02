@@ -37,7 +37,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.10.4"
+soft_vers = "0.10.5"
 
 # set home directory
 path = "~"
@@ -259,7 +259,8 @@ def check_for_dependencies():
 def iterate_for_permissions_func():
     for item in glob.glob(dir_bld + "*tree/*/*"):
         if "SlackBuild" in item:
-            os.chmod(item, stat.S_IEXEC)
+            perms = os.stat(item)
+            os.chmod(item, perms.st_mode | stat.S_IEXEC)
 
 
 def create_install_list_func():
