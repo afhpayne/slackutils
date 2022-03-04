@@ -2,7 +2,7 @@
 
 # MIT License
 
-# Copyright (c) 2019-2020 Andrew Payne
+# Copyright (c) 2019-2022 Andrew Payne
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ soft_name = "Slackgrab"
 soft_tag  = "a slackbuild tarball and binary downloader"
 
 # Version
-soft_vers = "0.6.0"
+soft_vers = "0.6.1"
 
 build_home = os.path.join(os.environ['HOME'], "slackstack", "")
 build_path = glob.glob(build_home + "*-tree")
@@ -49,7 +49,7 @@ download_list = []
 md5_list = []
 download_64_list = []
 md5_64_list = []
-
+bad_list = []
 
 def hello_string():
     os.system("clear")
@@ -138,6 +138,7 @@ def slackgrab_func():
             print("actual file md5sum =", hasher.hexdigest())
             if hash_list[counter] != hasher.hexdigest():
                 print("\n* * * CHECKSUMS DO NOT MATCH! * * *\n")
+                bad_list.append(tarname.name)
             else:
                 print("Checksum match :) \n")
             counter += 1
@@ -199,14 +200,10 @@ else:
                 download_64_list = []
                 md5_64_list = []
 
-
-
-
-        #             # # Github has a naming problem, this fixes it
-        #             if prgstem in tarball.name.strip().lower():
-        #                 pass
-        #             else:
-        #                 tarball_name_fix = prgnam + "-" + tarball.name
-        #                 os.rename((os.path.join(str(os.getcwd()) + "/" + str(tarname))), \
-        #                           (os.path.join(str(os.getcwd()) + "/" + tarball_name_fix)))
-        #             c += 1
+if len(bad_list) > 0:
+    for item in bad_list:
+        print("The MD5SUM for", item, "did not check out.")
+    print("")
+    exit()
+else:
+    exit()
