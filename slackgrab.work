@@ -62,6 +62,9 @@ def hello_string():
 prglist = []
 srclist = []
 prg_src = {}
+urllist = []
+src_url = {}
+md5list = []
 
 def make_list_of_prgs_func():
     for item in os.listdir(build_path):
@@ -90,17 +93,117 @@ def make_list_of_srcs_func():
 make_list_of_srcs_func()
 
 prg_src = dict(zip(prglist, srclist))
-for k, v in prg_src.items():
-    print(k, v)
-    if k == v:
+# for k, v in prg_src.items():
+#     if k == v:
+#         print(k)
+#     else:
+#         print(v)
         
+def make_list_of_urls_func():
+    for item in prglist:
+        info = (build_path + "/" + item + "/" + item + ".info")
+        with open(info) as i:
+            info = i.read()
+        for line in info.split():
+            if "DOWNLOAD_x86_64=" in line and len(line) > 18:
+                line = line.replace("DOWNLOAD_x86_64=", "")
+                line = line.strip('"')
+                urllist.append(item)
+                urllist.append(line)
+                src_url.update({item:line})
+            elif "DOWNLOAD=" in line and "UNSUPPORTED" not in line:
+                line = line.replace("DOWNLOAD=", "")
+                line = line.strip('"')
+                urllist.append(item)
+                urllist.append(line)
+                src_url.update({item:line})
 
-# for item in buildlist:
-#     info = (build_path + "/" + item + "/" + item + ".info")
-#     with open(info) as i:
-#         info = i.read()
-#     for row in info:
-#         if 
+make_list_of_urls_func()
+
+
+def make_list_of_md5s_func():
+    for item in prglist:
+        info = (build_path + "/" + item + "/" + item + ".info")
+        with open(info) as i:
+            info = i.read()
+        for line in info.split():
+            if "MD5SUM_x86_64=" in line and len(line) > 16:
+                line = line.replace("MD5SUM_x86_64=", "")
+                line = line.strip('"')
+                md5list.append(item)
+                md5list.append(line)
+                # src_url.update({item:line})
+            elif "MD5SUM=" in line and len(line) > 16:
+                line = line.replace("MD5SUM=", "")
+                line = line.strip('"')
+                md5list.append(item)
+                md5list.append(line)
+                # src_url.update({item:line})
+
+make_list_of_md5s_func()
+
+# for k, v in prg_src.items():
+#     if k == v:
+#         print(k)
+#     else:
+#         print(v)
+
+for k, v in prg_src.items():
+    x = src_url[k]
+    print(x)
+
+
+
+
+# print( prg_src["nextcloud-desktop"] )
+
+# for item in urllist:
+#     if "://" not in item:
+#         for k, v in prg_src.items():
+#             if item == k:
+#                 print(v)
+#                 newlist.append(k)
+#             else:
+#                 print(k)
+                
+    # try:
+    #     x = (prg_src[item])
+    #     if item == x:
+    #         print(x)
+    # except:
+    #     pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# for item in urllist:
+
+#     req = urllib.request.Request(
+#         url, headers={"User-Agent": "Chrome"})
+#     tarname = url.split('/')
+#     tarname = tarname[-1]
+#     if namelist[0] in tarname:
+#         continue
+#     else:
+#         popper = namelist[0]
+#         namelist[0] = (popper + "-" + tarname)
+#     print("Downloading " + url)
+#     with urllib.request.urlopen(req) as response, open(
+#             namelist[0], 'wb') as tarname:
+#         shutil.copyfileobj(response, tarname)
+#         # shutil.move(tarname, str(namelist[0]))
+#         # exit()
+
 
 
 
