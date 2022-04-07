@@ -30,6 +30,7 @@ import os
 import re
 import readline
 import shutil
+import subprocess
 import sys
 import urllib.request
 
@@ -38,7 +39,7 @@ soft_name = "Slackgrab"
 soft_tag  = "a slackbuild tarball and binary downloader"
 
 # Version
-soft_vers = "0.6.1"
+soft_vers = "0.6.2"
 
 build_home = os.path.join(os.environ['HOME'], "slackstack", "")
 build_path = glob.glob(build_home + "*-tree")
@@ -114,14 +115,16 @@ def slackgrab_func():
 
     def get_tar_func():
         for url in url_list:
-            req = urllib.request.Request(
-                url, headers={"User-Agent": "Chrome"})
-            tarname = url.split('/')
-            tarname = tarname[-1]
-            print("Downloading " + url)
-            with urllib.request.urlopen(req) as response, open(
-                    tarname, 'wb') as tarname:
-                shutil.copyfileobj(response, tarname)
+            subprocess.run(["curl", "-L", "-O", "-J", "-#", url])
+            # disabled urllib
+            # req = urllib.request.Request(
+            #    url, headers={"User-Agent": "Chrome"})
+            # tarname = url.split('/')
+            # tarname = tarname[-1]
+            # print("Downloading " + url)
+            # with urllib.request.urlopen(req) as response, open(
+            #         tarname, 'wb') as tarname:
+            #     shutil.copyfileobj(response, tarname)
 
 
     def check_md5_func():
