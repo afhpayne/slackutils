@@ -37,7 +37,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.10.5"
+soft_vers = "0.10.6"
 
 # set home directory
 path = "~"
@@ -174,18 +174,19 @@ def build_dict_remote_apps():
                and path != ".git":
                 # print(folder+"/"+path)
                 sbo_paths.update({path:folder})
-
+ 
     for path, folder in sbo_paths.items():
         with open(os.path.join(folder,path,path+".info"),"r") as f:
             lines = f.readlines()
             for line in lines:
-                if "PRGNAM" in line:
-                    prgnam = line.split('"')
-                    sbo_app_list.append(prgnam[1])
-                if "VERSION" in line:
-                    version = line.split('"')
-                    sbo_ver_list.append(version[1])
-
+                if "PRGNAM=" in line:
+                    prgnam = line.strip().split("=")
+                    prgnam = str(prgnam[1]).replace('"','')
+                    sbo_app_list.append(prgnam)
+                if "VERSION=" in line:
+                    version = line.strip().split('=')
+                    version = str(version[1]).replace('"','')
+                    sbo_ver_list.append(version)
     sbo_av_dict = dict(zip(sbo_app_list, sbo_ver_list))
     return sbo_av_dict
 
