@@ -38,7 +38,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.2.0"
+soft_vers = "0.20.0"
 
 # set home directory
 path = "~"
