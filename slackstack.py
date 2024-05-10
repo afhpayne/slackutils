@@ -38,14 +38,15 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.20.0"
+soft_vers = "0.20.1"
 
 # set home directory
 path = "~"
 home = os.path.expanduser(path)
 dir_sst = os.path.join(home, "slackstack")
 dir_sbo = os.path.join(home, dir_sst, "slackbuilds")
-dir_dbs = os.path.join(home, "slackware/dev_slack")
+dir_dev = os.path.join(home, "slackware/dev_slack")
+dir_dbs = os.path.join(home, "slackware/dbs_slackware")
 
 # # This is the git repo to use for sbo
 sbo_git = "https://gitlab.com/SlackBuilds.org/slackbuilds.git"
@@ -115,11 +116,16 @@ for i in os.walk(dir_sbo):
         sbo_dict.update({sublist[-1]:i[0]})
 
 # update sbo programs dict with personal builds
-for i in os.walk(dir_dbs):
+for i in os.walk(dir_dev):
     sublist = (i[0].split("/"))
     if len(sublist) == 6 and ".git" not in sublist:
         sbo_dict.update({sublist[-1]:i[0]})
 
+# update sbo programs dict with test builds
+for i in os.walk(dir_dbs):
+    sublist = (i[0].split("/"))
+    if len(sublist) == 6 and ".git" not in sublist:
+        sbo_dict.update({sublist[-1]:i[0]})
 
 userapp = input("\nWhat app are we building? ")
 # userapp = [userapp]
