@@ -38,7 +38,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.20.1"
+soft_vers = "0.20.2"
 
 # set home directory
 path = "~"
@@ -215,10 +215,11 @@ for app,num in install_dict.items():
         if app == sbo_app:
             subprocess.run(['rsync', '-a', sbo_path, local_path])
 
-for item in glob.glob(local_path + userapp + "/*"):
-    if "SlackBuild" in item:
-        perms = os.stat(item)
-        os.chmod(item, perms.st_mode | stat.S_IEXEC)
+# for item in glob.glob(local_path + userapp + "/*"):
+    # print(item)
+    # if "SlackBuild" in item:
+    #     perms = os.stat(item)
+    #     os.chmod(item, perms.st_mode | stat.S_IEXEC)
 
 # write text file with install order
 io_path = os.path.join(dir_sst, userapp + "-tree")
@@ -233,5 +234,10 @@ if grab_y_n == "Y" or grab_y_n == "y":
     subprocess.run(["slackgrab.py", "--skip"], cwd=sys.path[0])
 else:
     pass
+
+for item in glob.glob(local_path + "/*/*"):
+    if "SlackBuild" in item:
+        perms = os.stat(item)
+        os.chmod(item, perms.st_mode | stat.S_IEXEC)
 
 exit()
