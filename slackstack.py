@@ -38,15 +38,16 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.20.2"
+soft_vers = "0.20.3"
 
 # set home directory
 path = "~"
 home = os.path.expanduser(path)
 dir_sst = os.path.join(home, "slackstack")
-dir_sbo = os.path.join(home, dir_sst, "slackbuilds")
+dir_fork = os.path.join(home, dir_sst, "slackbuilds")
+dir_sbo = os.path.join(home, "slackware/sbo_slack")
+dir_dbs = os.path.join(home, "slackware/dbs_slack")
 dir_dev = os.path.join(home, "slackware/dev_slack")
-dir_dbs = os.path.join(home, "slackware/dbs_slackware")
 
 # # This is the git repo to use for sbo
 sbo_git = "https://gitlab.com/SlackBuilds.org/slackbuilds.git"
@@ -70,14 +71,14 @@ welstr = ("Welcome to " \
 print("\n" + welstr)
 print("")
 
-subprocess.run(["mkdir", "-p", dir_sbo])
+subprocess.run(["mkdir", "-p", dir_fork])
 
 # update git
 print("Updating git")
-if os.path.isdir(dir_sbo + "/" + ".git"):
-    subprocess.run(["git", "-C", dir_sbo, "pull"])
+if os.path.isdir(dir_fork + "/" + ".git"):
+    subprocess.run(["git", "-C", dir_fork, "pull"])
 else:
-    subprocess.run(["git", "clone", sbo_git, dir_sbo])
+    subprocess.run(["git", "clone", sbo_git, dir_fork])
 time.sleep(1)
 
 # remove existing tree directory
@@ -110,13 +111,13 @@ for clean in pack_clean_name:
     system_dict.update({app[:-1]:ver})
 
 # create dict of sbo programs
-for i in os.walk(dir_sbo):
+for i in os.walk(dir_fork):
     sublist = (i[0].split("/"))
     if len(sublist) == 7 and ".git" not in sublist:
         sbo_dict.update({sublist[-1]:i[0]})
 
 # update sbo programs dict with personal builds
-for i in os.walk(dir_dev):
+for i in os.walk(dir_sbo):
     sublist = (i[0].split("/"))
     if len(sublist) == 6 and ".git" not in sublist:
         sbo_dict.update({sublist[-1]:i[0]})
