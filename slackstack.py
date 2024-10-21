@@ -26,6 +26,7 @@
 
 import glob
 import os
+import platform
 import re
 import shutil
 import stat
@@ -38,7 +39,11 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.20.3"
+soft_vers = "0.21.0"
+
+release = platform.freedesktop_os_release()
+relname = [release["PRETTY_NAME"]]
+print(relname)
 
 # set home directory
 path = "~"
@@ -48,6 +53,10 @@ dir_fork = os.path.join(home, dir_sst, "slackbuilds")
 dir_sbo = os.path.join(home, "slackware/sbo_slack")
 dir_dbs = os.path.join(home, "slackware/dbs_slack")
 dir_dev = os.path.join(home, "slackware/dev_slack")
+
+# skip dir_dev if we're not using current
+if "post" not in (relname[0]):
+    dir_dev = dir_dbs
 
 # # This is the git repo to use for sbo
 sbo_git = "https://gitlab.com/SlackBuilds.org/slackbuilds.git"
@@ -67,7 +76,8 @@ welstr = ("Welcome to " \
           + soft_name \
           + " version "
           + soft_vers + ", " \
-          + soft_tag + ".")
+          + soft_tag + "." \
+          + "\n\nSystem is: " + relname[0])
 print("\n" + welstr)
 print("")
 
@@ -122,8 +132,15 @@ for i in os.walk(dir_sbo):
     if len(sublist) == 6 and ".git" not in sublist:
         sbo_dict.update({sublist[-1]:i[0]})
 
-# update sbo programs dict with test builds
+# update sbo programs dict with personal builds
 for i in os.walk(dir_dbs):
+    sublist = (i[0].split("/"))
+    if len(sublist) == 6 and ".git" not in sublist:
+        sbo_dict.update({sublist[-1]:i[0]})
+
+# update sbo programs dict with dev builds for -current
+# nullified if slack version is not current
+for i in os.walk(dir_dev):
     sublist = (i[0].split("/"))
     if len(sublist) == 6 and ".git" not in sublist:
         sbo_dict.update({sublist[-1]:i[0]})
