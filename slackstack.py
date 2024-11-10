@@ -39,7 +39,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.21.0"
+soft_vers = "0.22.1"
 
 release = platform.freedesktop_os_release()
 relname = [release["PRETTY_NAME"]]
@@ -71,25 +71,15 @@ install_dict = {}
 version_dict = {}
 ver_list = []
 
-os.system("clear")
-welstr = ("Welcome to " \
-          + soft_name \
-          + " version "
-          + soft_vers + ", " \
-          + soft_tag + "." \
-          + "\n\nSystem is: " + relname[0])
-print("\n" + welstr)
-print("")
-
 subprocess.run(["mkdir", "-p", dir_fork])
 
 # update git
-print("Updating git")
-if os.path.isdir(dir_fork + "/" + ".git"):
-    subprocess.run(["git", "-C", dir_fork, "pull"])
-else:
-    subprocess.run(["git", "clone", sbo_git, dir_fork])
-time.sleep(1)
+# print("Updating git")
+# if os.path.isdir(dir_fork + "/" + ".git"):
+#     subprocess.run(["git", "-C", dir_fork, "pull"])
+# else:
+#     subprocess.run(["git", "clone", sbo_git, dir_fork])
+# time.sleep(1)
 
 # remove existing tree directory
 kill_path = glob.glob(os.path.join(dir_sst, "*-tree", ""))
@@ -120,6 +110,24 @@ for clean in pack_clean_name:
         clean.pop(0)
     system_dict.update({app[:-1]:ver})
 
+# add python modules to list of local packages
+py_list = []
+subprocess.run(["pip list > /tmp/pip.txt"], shell=True,
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.STDOUT)
+with open(os.path.join("/tmp/pip.txt"), 'r') as file:
+    for line in file:
+        line_alt1 = line.replace ("_", "-")
+        line_alt2 = line.replace ("-", "_")
+        line = "python3-" + line
+        line_alt1 = "python3-" + line_alt1
+        line_alt2 = "python3-" + line_alt2
+        py_list.append(line.strip().split())
+        py_list.append(line_alt1.strip().split())
+        py_list.append(line_alt2.strip().split())
+for module in py_list:
+    system_dict.update({module[0] : module[1]})
+
 # create dict of sbo programs
 for i in os.walk(dir_fork):
     sublist = (i[0].split("/"))
@@ -144,6 +152,16 @@ for i in os.walk(dir_dev):
     sublist = (i[0].split("/"))
     if len(sublist) == 6 and ".git" not in sublist:
         sbo_dict.update({sublist[-1]:i[0]})
+
+os.system("clear")
+welstr = ("Welcome to " \
+          + soft_name \
+          + " version "
+          + soft_vers + ", " \
+          + soft_tag + "." \
+          + "\n\nSystem is: " + relname[0])
+print("\n" + welstr)
+print("")
 
 userapp = input("\nWhat app are we building? ")
 # userapp = [userapp]
