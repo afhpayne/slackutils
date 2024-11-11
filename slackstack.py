@@ -73,13 +73,23 @@ ver_list = []
 
 subprocess.run(["mkdir", "-p", dir_fork])
 
+os.system("clear")
+welstr = ("Welcome to " \
+          + soft_name \
+          + " version "
+          + soft_vers + ", " \
+          + soft_tag + "." \
+          + "\n\nSystem is: " + relname[0])
+print("\n" + welstr)
+print("")
+
 # update git
-# print("Updating git")
-# if os.path.isdir(dir_fork + "/" + ".git"):
-#     subprocess.run(["git", "-C", dir_fork, "pull"])
-# else:
-#     subprocess.run(["git", "clone", sbo_git, dir_fork])
-# time.sleep(1)
+print("Updating git")
+if os.path.isdir(dir_fork + "/" + ".git"):
+    subprocess.run(["git", "-C", dir_fork, "pull"])
+else:
+    subprocess.run(["git", "clone", sbo_git, dir_fork])
+time.sleep(1)
 
 # remove existing tree directory
 kill_path = glob.glob(os.path.join(dir_sst, "*-tree", ""))
@@ -153,15 +163,15 @@ for i in os.walk(dir_dev):
     if len(sublist) == 6 and ".git" not in sublist:
         sbo_dict.update({sublist[-1]:i[0]})
 
-os.system("clear")
-welstr = ("Welcome to " \
-          + soft_name \
-          + " version "
-          + soft_vers + ", " \
-          + soft_tag + "." \
-          + "\n\nSystem is: " + relname[0])
-print("\n" + welstr)
-print("")
+# os.system("clear")
+# welstr = ("Welcome to " \
+#           + soft_name \
+#           + " version "
+#           + soft_vers + ", " \
+#           + soft_tag + "." \
+#           + "\n\nSystem is: " + relname[0])
+# print("\n" + welstr)
+# print("")
 
 userapp = input("\nWhat app are we building? ")
 # userapp = [userapp]
@@ -208,16 +218,10 @@ while x < 100:
 # create printable ordered list of dependencies
 for a,b in install_dict.items():
     if a != userapp:
-        install_order_list.insert(0, str(b) + " " + a)
+        install_order_list.append([str(b), a])
+install_order_list.append([str(100), userapp])
 install_order_list.sort()
 install_order_list.reverse()
-install_order_list.append(str(100) + " " + userapp)
-
-y = len(install_order_list)
-for install in install_order_list:
-    install = install[3:]
-    install = str(y) + install
-    y-=1
 
 # add versions to version dict
 for app,num in version_dict.items():
@@ -251,18 +255,22 @@ for app,num in install_dict.items():
         if app == sbo_app:
             subprocess.run(['rsync', '-a', sbo_path, local_path])
 
-# for item in glob.glob(local_path + userapp + "/*"):
-    # print(item)
-    # if "SlackBuild" in item:
-    #     perms = os.stat(item)
-    #     os.chmod(item, perms.st_mode | stat.S_IEXEC)
-
 # write text file with install order
+lenlist = []
+x = 100
 io_path = os.path.join(dir_sst, userapp + "-tree")
 with open(os.path.join(io_path, "install_order_list.txt"), "w") as f:
-    f.write("install_order_list:\n")
-    for app in install_order_list:
-        f.write(app + "\n")
+    for item in install_order_list:
+        lenlist.append(item[1])
+        n = max(lenlist, key=len)
+    for item in install_order_list:
+        textline = x
+        textline = (str(textline) + " "*3 + item[1] + (" " * ((len(n)+3) - len(item[1]))))
+        for app,ver in system_dict.items():
+            if item[1] == app:
+                textline = (textline + "(installed version)" + "\t" + ver)
+        x += 1
+        f.write(textline + "\n")
 
 # run or not slackgrab to get tarballs
 grab_y_n = input("Run slackgrab.py to get the tarballs (y/n)? ")
