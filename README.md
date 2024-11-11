@@ -24,6 +24,7 @@ Uses a local clone of the slackbuilds.org git repository <br />
 Everything is written in Python 3.9 and has no dependencies beyond the standard python library.
 
 ### Release Notes for Slackstack:<br />
+__0.22.1__ add python module search, improve install list output<br />
 __0.20.0__ rewrite code, eliminate missing dependency bug, improve install list output<br />
 __0.10.6__ fixed bug showing wrong versions of available apps<br />
 __0.10.5__ fixed set permissions for SlackBuild script<br />
