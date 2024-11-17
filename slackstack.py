@@ -39,7 +39,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.22.1"
+soft_vers = "0.23.0"
 
 release = platform.freedesktop_os_release()
 relname = [release["PRETTY_NAME"]]
@@ -158,11 +158,22 @@ for i in os.walk(dir_dbs):
 
 # update sbo programs dict with dev builds for -current
 # nullified if slack version is not current
-for i in os.walk(dir_dev):
-    sublist = (i[0].split("/"))
-    if len(sublist) == 6 and ".git" not in sublist:
-        sbo_dict.update({sublist[-1]:i[0]})
+# for i in os.walk(dir_dev):
+#     sublist = (i[0].split("/"))
+#     if len(sublist) == 6 and ".git" not in sublist:
+#         sbo_dict.update({sublist[-1]:i[0]})
 
+for i in os.walk(dir_dev):
+    if os.path.isdir(i[0]) and ".git" not in i[0]:
+        # print(a[0])
+        sublist = (i[0].split("/"))
+        if len(sublist) == 6 and "tree" not in sublist[-1]:
+            sbo_dict.update({sublist[-1]:i[0]})
+        elif len(sublist) == 7 and "tree" in sublist[-2]:
+            sbo_dict.update({sublist[-1]:i[0]})
+
+
+        
 # os.system("clear")
 # welstr = ("Welcome to " \
 #           + soft_name \
