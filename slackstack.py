@@ -165,14 +165,11 @@ for i in os.walk(dir_dbs):
 
 for i in os.walk(dir_dev):
     if os.path.isdir(i[0]) and ".git" not in i[0]:
-        # print(a[0])
         sublist = (i[0].split("/"))
         if len(sublist) == 6 and "tree" not in sublist[-1]:
             sbo_dict.update({sublist[-1]:i[0]})
         elif len(sublist) == 7 and "tree" in sublist[-2]:
             sbo_dict.update({sublist[-1]:i[0]})
-
-
         
 # os.system("clear")
 # welstr = ("Welcome to " \
