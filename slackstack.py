@@ -39,7 +39,7 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.23.0"
+soft_vers = "0.23.1"
 
 release = platform.freedesktop_os_release()
 relname = [release["PRETTY_NAME"]]
@@ -84,12 +84,12 @@ print("\n" + welstr)
 print("")
 
 # update git
-print("Updating git")
-if os.path.isdir(dir_fork + "/" + ".git"):
-    subprocess.run(["git", "-C", dir_fork, "pull"])
-else:
-    subprocess.run(["git", "clone", sbo_git, dir_fork])
-time.sleep(1)
+# print("Updating git")
+# if os.path.isdir(dir_fork + "/" + ".git"):
+#     subprocess.run(["git", "-C", dir_fork, "pull"])
+# else:
+#     subprocess.run(["git", "clone", sbo_git, dir_fork])
+# time.sleep(1)
 
 # remove existing tree directory
 kill_path = glob.glob(os.path.join(dir_sst, "*-tree", ""))
@@ -193,7 +193,7 @@ for app,path in sbo_dict.items():
             install_dict.update({app:ver[9:-2]})
             version_dict.update({app:ver[9:-2]})            
             dep_list.append(app)
-
+            
 # fail if no app
 if dep_list:
     local_path = (os.path.join(dir_sst, userapp + "-tree" + "/"))
@@ -209,19 +209,19 @@ y = 101
 while x < 100:
     for dep in dep_list:
         for app, path in sbo_dict.items():
-            if dep == app:
+            if app == dep:
                 with open(os.path.join(path, app + ".info")) as info:
                     lines = info.readlines()
                     dep = lines[-3]
                     dep = dep[10:-2].split(" ")
                     for d in dep:
-                        if d != "":
+                        if d != "" and d not in dep_list:
                             dep_list.append(d)
                             install_dict.update({d:y})
                             version_dict.update({d:y})            
                             y += 1
-                    dep_list.pop(0)
-    x += 1
+                    # dep_list.pop(0)
+            x += 1
 
 # create printable ordered list of dependencies
 for a,b in install_dict.items():
