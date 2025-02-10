@@ -2,7 +2,7 @@
 
 # MIT License
 
-# Copyright (c) 2019-2024 Andrew Payne
+# Copyright (c) 2019-2025 Andrew Payne
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -39,11 +39,14 @@ soft_name = "Slackstack"
 soft_tag  = "a slackbuild utility"
 
 # Version
-soft_vers = "0.23.1"
+soft_vers = "0.23.2"
 
-release = platform.freedesktop_os_release()
-relname = [release["PRETTY_NAME"]]
-print(relname)
+with open(os.path.join("/etc/os-release"), 'r') as file:
+    for line in file:
+        if "post" in line:
+            relname = "current"
+        else:
+            relname = "stable"
 
 # set home directory
 path = "~"
@@ -55,7 +58,7 @@ dir_dbs = os.path.join(home, "slackware/dbs_slack")
 dir_dev = os.path.join(home, "slackware/dev_slack")
 
 # skip dir_dev if we're not using current
-if "post" not in (relname[0]):
+if relname == "stable":
     dir_dev = dir_dbs
 
 # # This is the git repo to use for sbo
@@ -79,17 +82,17 @@ welstr = ("Welcome to " \
           + " version "
           + soft_vers + ", " \
           + soft_tag + "." \
-          + "\n\nSystem is: " + relname[0])
+          + "\n\nSystem is: " + "Slackware " + relname)
 print("\n" + welstr)
 print("")
 
 # update git
-# print("Updating git")
-# if os.path.isdir(dir_fork + "/" + ".git"):
-#     subprocess.run(["git", "-C", dir_fork, "pull"])
-# else:
-#     subprocess.run(["git", "clone", sbo_git, dir_fork])
-# time.sleep(1)
+print("Updating git")
+if os.path.isdir(dir_fork + "/" + ".git"):
+    subprocess.run(["git", "-C", dir_fork, "pull"])
+else:
+    subprocess.run(["git", "clone", sbo_git, dir_fork])
+time.sleep(1)
 
 # remove existing tree directory
 kill_path = glob.glob(os.path.join(dir_sst, "*-tree", ""))
