@@ -43,7 +43,7 @@ soft_vers = "0.23.2"
 
 with open(os.path.join("/etc/os-release"), 'r') as file:
     for line in file:
-        if "post" in line:
+        if "current" in line:
             relname = "current"
         else:
             relname = "stable"
